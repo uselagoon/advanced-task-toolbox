@@ -1,0 +1,13 @@
+{
+    "name": "amazeeio/environment-migration-tool",
+    "description": "Scripts for environment migration tasks",
+    "type": "project",
+    "autoload": {"psr-4": {
+        "Migrator\\": "src/"
+    }},
+    "require": {
+        "consolidation/robo": "^3.0",
+        "uselagoon/lagoon-php-sdk": "^1.6"
+    },
+    "license": "MIT"
+}
