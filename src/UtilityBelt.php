@@ -3,6 +3,8 @@
 namespace Migrator;
 
 use \RenokiCo\PhpK8s\Kinds\K8sDeployment;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class UtilityBelt
 {
@@ -82,8 +84,9 @@ class UtilityBelt
     public function execInPod($deploymentName, $command)
     {
         $pod = $this->getPodFromDeployment($deploymentName);
-        print("Going to execute `{$command}` in pod " . $pod->getName());
-        var_dump($pod->exec(['/bin/sh', '-c', $command]));
+        print("Going to execute `{$command}` in pod " . $pod->getName() . "\n");
+        $results = $pod->exec(['/bin/sh', '-c', $command]);
+        var_dump($results);
     }
 
     /**
@@ -102,6 +105,43 @@ class UtilityBelt
           ->get();
         return $deployment;
     }
+
+    //TODO: copy lagoon-sync to tmp?
+
+
+//    public function copyFromPod($deploymentName, $from, $to) {
+//        $pod = $this->getPodFromDeployment($deploymentName);
+//
+//    }
+
+
+
+    /**
+     * @param $command kubectl command to be run - without ns or kubectl
+     * @param $token
+     *
+     * @return void
+     */
+    public function runKubectl($command, $token=null) {
+
+        $command = "kubectl -n {$this->namespace} " . $command;
+
+        if(!empty($token)) {
+            $command .= " --token={$token}";
+        }
+
+        $process = Process::fromShellCommandline($command);
+        $process->run();
+
+        if (!$process->isSuccessful() || $process->getExitCode() != 0) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process->getOutput();
+
+    }
+
+    //TODO: get/parse docker-compose.json to work out file mappings?
 
 
 }

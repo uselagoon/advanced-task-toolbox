@@ -1,0 +1,17 @@
+steps:
+  - name: Scale up cli deployment
+    type: scale
+    deployment: cli
+  - name: Run ls on deployment
+    type: exec
+    deployment: cli
+    command: ls -lah
+  - name: Copy to container
+    type: copyto
+    deployment: cli
+    source: ./testcopy.txt
+    destination: /tmp/testcopy.txt
+  - name: Run ls on deployment tmp
+    type: exec
+    deployment: cli
+    command: ls -lah /tmp

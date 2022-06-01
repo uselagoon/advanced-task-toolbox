@@ -8,7 +8,9 @@
     "require": {
         "consolidation/robo": "^3.0",
         "uselagoon/lagoon-php-sdk": "^1.6",
-        "renoki-co/php-k8s": "^3.7"
+        "renoki-co/php-k8s": "^3.7",
+        "symfony/process": "^6.1",
+        "symfony/yaml": "^6.1"
     },
     "license": "MIT"
 }
