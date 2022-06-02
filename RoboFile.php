@@ -14,7 +14,7 @@ class RoboFile extends \Robo\Tasks
     public function run(string $migrateYaml, $opts = ['token' => null, 'kubeContext' => null, 'namespace' => null]) {
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         $migration = $this->loadYaml($migrateYaml);
-        $runner = new \Migrator\Runner($migration['steps'], $cluster, $this->grabNamespace($opts['namespace']));
+        $runner = new \Migrator\Runner($migration['steps'], $cluster, $this->grabNamespace($opts['namespace']), $this->getToken($opts['token']));
         $runner->run();
     }
 
@@ -34,10 +34,11 @@ class RoboFile extends \Robo\Tasks
         //        }
         //      var_dump($cluster->getConfigmapByName("lagoon-env", 'demo-fsa-dev'));
 
-        $belt = new UtilityBelt($cluster, $this->grabNamespace($opts['namespace']));
-//        $belt->scaleUpDeployment("cli");
-//        $belt->execInPod("cli", "touch /tmp/hithere");
-        $this->getToken();
+        $belt = new \Migrator\LagoonUtilityBelt($cluster, $this->grabNamespace($opts['namespace']));
+        $belt->deployEnvironment("demo-fsa", "main");
+////        $belt->scaleUpDeployment("cli");
+////        $belt->execInPod("cli", "touch /tmp/hithere");
+//        $this->getToken();
     }
 
 

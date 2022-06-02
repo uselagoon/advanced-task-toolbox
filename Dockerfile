@@ -8,7 +8,10 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check && \
     chmod +x kubectl && mv kubectl /usr/local/bin
 
+RUN curl -L "https://github.com/uselagoon/lagoon-cli/releases/download/v0.12.3/lagoon-cli-v0.12.3-linux-amd64" -o /usr/local/bin/lagoon && chmod +x /usr/local/bin/lagoon
+
 
 RUN composer install
 
-CMD /app/vendor/bin/robo test
+#CMD /app/vendor/bin/robo run /app/migrate.yaml
+CMD sleep 500

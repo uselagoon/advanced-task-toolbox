@@ -114,8 +114,6 @@ class UtilityBelt
 //
 //    }
 
-
-
     /**
      * @param $command kubectl command to be run - without ns or kubectl
      * @param $token

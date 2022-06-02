@@ -27,6 +27,7 @@ class Runner
             if(!class_exists($classname)) {
                 throw new \Exception("Class '{$classname} does not exist");
             }
+
             $stepObj = new $classname($this->cluster, $this->namespace, $this->token);
             $stepObj->run($step);
         }

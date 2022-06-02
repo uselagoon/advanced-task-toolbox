@@ -1,4 +1,8 @@
 steps:
+  - name: run local ls
+    type: exec
+    local: true
+    command: echo "hello world"
   - name: Scale up cli deployment
     type: scale
     deployment: cli
@@ -15,3 +19,5 @@ steps:
     type: exec
     deployment: cli
     command: ls -lah /tmp
+rollback:
+  - name:
