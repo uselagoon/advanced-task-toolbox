@@ -28,8 +28,9 @@ class LagoonUtilityBelt extends UtilityBelt
 
     }
 
-    public function getLatestDeploymentId($project, $environment) {
-
+    public function getLagoonToken() {
+        $token = $this->runLagoonCommand("get token");
+        return trim($token);
     }
 
     public function waitForDeploymentToComplete($project, $environment, $deploymentId) {
@@ -71,7 +72,6 @@ class LagoonUtilityBelt extends UtilityBelt
             $commandFull .= "--ssh-key {$this->lagoonSshKeyPath}";
         }
 
-        var_dump($commandFull);
         $process = Process::fromShellCommandline($commandFull);
         $process->run();
 
