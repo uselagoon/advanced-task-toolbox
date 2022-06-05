@@ -43,6 +43,57 @@ class LagoonUtilityBelt extends UtilityBelt
         $this->latestLagoonToken = trim($this->runLagoonCommand("get token"));
     }
 
+
+    public function getProjectDetailsByName($project)
+    {
+        $query = '
+query projectByNameVar($name: String!) {
+  projectByName(name: $name) {
+    id
+    name
+  }
+}';
+        $client = $this->getLagoonPHPClient();
+        try {
+            $projDeets = $client->json($query, ["name" => $project]);
+        } catch (\Exception $ex) {
+            //TODO: do we want to implement any non-terrible error handling?
+            throw $ex;
+        }
+        return (array)$projDeets->data->projectByName;
+    }
+
+
+    public function getEnvironmentDetails($project, $environment)
+    {
+        //get project id first
+        $projectDetails = $this->getProjectDetailsByName($project);
+        $query = 'query environmentByNameVar($projectId: Int!, $envName: String!) {
+  environmentByName(project: $projectId, name: $envName) {
+    id
+    name
+    openshiftProjectPattern
+    openshift {
+      id
+      friendlyName
+    }
+  }
+}';
+
+        $client = $this->getLagoonPHPClient();
+        try {
+            $envDeets = $client->json(
+              $query,
+              ["projectId" => $projectDetails['id'], "envName" => $environment]
+            );
+            return (array)$envDeets->data->environmentByName;
+        } catch (\Exception $ex) {
+            //TODO: do we want to implement any non-terrible error handling?
+            throw $ex;
+        }
+    }
+
+    //Just used to test ...
     public function whoIsMe()
     {
         $query = "query whome {
