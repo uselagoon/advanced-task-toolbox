@@ -35,7 +35,7 @@ class RoboFile extends \Robo\Tasks
         //      var_dump($cluster->getConfigmapByName("lagoon-env", 'demo-fsa-dev'));
 
         $belt = new \Migrator\LagoonUtilityBelt($cluster, $this->grabNamespace($opts['namespace']));
-//        var_dump($belt->getLagoonToken());
+        var_dump($belt->whoIsMe());
 //        $belt->deployEnvironment("demo-fsa", "main");
 ////        $belt->scaleUpDeployment("cli");
 ////        $belt->execInPod("cli", "touch /tmp/hithere");
