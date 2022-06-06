@@ -13,4 +13,5 @@ RUN curl -L "https://github.com/uselagoon/lagoon-cli/releases/download/v0.12.5/l
 
 RUN composer install
 
-CMD /app/vendor/bin/robo run /app/migrate.yaml
+#CMD /app/vendor/bin/robo run /app/migrate.yaml
+CMD sleep 500

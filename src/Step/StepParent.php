@@ -2,6 +2,8 @@
 
 namespace Migrator\Step;
 
+use Migrator\LagoonUtilityBelt;
+use Migrator\RunnerArgs;
 use Migrator\UtilityBelt;
 
 abstract class StepParent implements StepInterface
@@ -11,13 +13,15 @@ abstract class StepParent implements StepInterface
     protected $namespace;
     protected $utilityBelt;
     protected $token;
+    protected $args;
 
-    public function __construct($cluster, $namespace, $token)
+    public function __construct(RunnerArgs $args)
     {
-        $this->cluster = $cluster;
-        $this->namespace = $namespace;
-        $this->token = $token;
-        $this->utilityBelt = new UtilityBelt($this->cluster, $this->namespace);
+        $this->cluster = $args->cluster;
+        $this->namespace = $args->namespace;
+        $this->token = $args->token;
+        $this->args = $args;
+        $this->utilityBelt = new LagoonUtilityBelt($this->cluster, $this->namespace, $args->sshKey);
     }
 
     abstract public function run(array $args);

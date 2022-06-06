@@ -12,7 +12,7 @@ class LagoonUtilityBelt extends UtilityBelt
 
     static $DEPLOY_WAIT_TIMEOUT = 60;
 
-    static $DEPLOY_WAIT_ATTEMPTS = 15; //15 iterations of $DEPLOY_WAIT_TIMEOUT
+    static $DEPLOY_WAIT_ATTEMPTS = 60; //60 iterations of $DEPLOY_WAIT_TIMEOUT - i.e. an hour.
 
     protected $lagoonSshKeyPath;
 
@@ -35,6 +35,46 @@ class LagoonUtilityBelt extends UtilityBelt
         );
         $id = trim($resp);
         $this->waitForDeploymentToComplete($project, $environment, $id);
+    }
+
+    public function setDeployTargetForEnvironment($project, $environmentName, $target)
+    {
+        $e = $this->getEnvironmentDetails($project, $environmentName);
+        if(!empty($e['openshift']) && !empty($e['openshift']->id)) {
+            if($e['openshift']->id == $target) {
+                throw new \Exception("Deploy target for {$project}:{$e} already set to {$target}");
+            }
+        }
+
+        var_dump($e['id']);
+        var_dump($target);
+
+
+        $query = '
+mutation updateOpenshift ($envid: Int!, $targetID: Int!) {
+  updateEnvironment(input:{
+    id: $envid,
+    patch: {
+      openshift: $targetID
+    }
+  }) {
+    id
+    name
+    openshift {
+      id
+      name
+    }
+  }
+}';
+        $client = $this->getLagoonPHPClient();
+        try {
+            $envDeetsNew = $client->json($query, ["envid" => $e['id'], "targetID" => $target]);
+        } catch (\Exception $ex) {
+            //TODO: do we want to implement any non-terrible error handling?
+            throw $ex;
+        }
+        var_dump($envDeetsNew);
+
     }
 
 
@@ -113,13 +153,6 @@ query projectByNameVar($name: String!) {
         return new LagoonClient($endpoint, $token);
     }
 
-    public function setDeployTargetForEnvironment(
-      $project,
-      $environment,
-      $deployTargetId
-    ) {
-    }
-
     public function getLagoonToken()
     {
         if (empty($this->latestLagoonToken)) {
@@ -176,7 +209,7 @@ query projectByNameVar($name: String!) {
     {
         $commandFull = "lagoon " . $command;
         if (!empty($this->lagoonSshKeyPath)) {
-            $commandFull .= "--ssh-key {$this->lagoonSshKeyPath}";
+            $commandFull .= " --ssh-key {$this->lagoonSshKeyPath}";
         }
 
         $process = Process::fromShellCommandline($commandFull);
