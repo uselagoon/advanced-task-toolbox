@@ -1,0 +1,5 @@
+steps:
+  - name: run local ls
+    type: exec
+    local: true
+    command: echo "Running the default - you may want to pass through a migrate file"

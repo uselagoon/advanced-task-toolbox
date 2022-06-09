@@ -12,8 +12,8 @@ class RoboFile extends \Robo\Tasks
 {
 
     public function run(
-      string $migrateYaml,
       $opts = [
+        'migrateYaml' => './scripts/default.yaml',
         'token' => null,
         'kubeContext' => null,
         'namespace' => null,
@@ -21,6 +21,11 @@ class RoboFile extends \Robo\Tasks
         'environment' => null, 'sshKey' => null,
       ]
     ) {
+
+        $opts = array_merge($opts, $this->processEnvironment());
+
+        $migrateYaml = $opts['migrateYaml'];
+
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         $migration = $this->loadYaml($migrateYaml);
 
@@ -77,6 +82,23 @@ class RoboFile extends \Robo\Tasks
         //        $this->getToken();
     }
 
+
+    /**
+     * @return array
+     */
+    protected function processEnvironment() {
+        $payload = getenv("JSON_PAYLOAD");
+        if(!$payload) return [];
+        $payload = base64_decode($payload);
+        if(!$payload) return [];
+        var_dump($payload);
+        $payload = json_decode($payload, true);
+        if(json_last_error()) {
+            var_dump(json_last_error_msg());
+            return [];
+        }
+        return $payload;
+    }
 
     private function grabNamespace($nameSpace)
     {
