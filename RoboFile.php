@@ -67,15 +67,8 @@ class RoboFile extends \Robo\Tasks
     public function test(
       $opts = ['token' => null, 'kubeContext' => null, 'namespace' => null]
     ) {
-        // var_dump(\Migrator\Environment::returnsTrue());
-        //        sleep(60*10);
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         /** @var \RenokiCo\PhpK8s\Kinds\K8sNamespace $namespace */
-        //      foreach ($cluster->getAllNamespaces() as $namespace) {
-        //          var_dump($namespace->getName());
-        //        }
-        //      var_dump($cluster->getConfigmapByName("lagoon-env", 'demo-fsa-dev'));
-
         $belt = new \Migrator\LagoonUtilityBelt(
           $cluster,
           $this->grabNamespace($opts['namespace'])
@@ -86,10 +79,6 @@ class RoboFile extends \Robo\Tasks
             "master"
           )
         );
-        //        $belt->deployEnvironment("demo-fsa", "main");
-        ////        $belt->scaleUpDeployment("cli");
-        ////        $belt->execInPod("cli", "touch /tmp/hithere");
-        //        $this->getToken();
     }
 
 

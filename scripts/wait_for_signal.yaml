@@ -1,0 +1,4 @@
+steps:
+  - name: Wait for signal
+    type: waitForFile
+    filename: /tmp/taskdone
