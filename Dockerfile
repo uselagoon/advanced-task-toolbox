@@ -14,5 +14,5 @@ RUN wget -O /usr/bin/lagoon-sync https://github.com/uselagoon/lagoon-sync/releas
 
 RUN composer install && touch /app/.lagoon.yml
 
-CMD /app/vendor/bin/robo run --migrateYaml=./scripts/migrate_bi_drupal.yaml
+CMD /app/vendor/bin/robo run --migrateYaml=./scripts/wait_for_signal.yaml
 #CMD sleep 1500
