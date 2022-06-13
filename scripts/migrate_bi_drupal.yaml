@@ -1,0 +1,43 @@
+steps:
+  - name: Scale up cli deployment
+    type: scale
+    deployment: cli
+  - name: run local ls
+    type: exec
+    local: true
+    command: ls
+#    command: cp /var/run/secrets/lagoon/ssh/ssh-privatekey /tmp/ssh-privatekey && chmod 600 /tmp/ssh-privatekey && lagoon-sync sync mariadb --dry-run=true --config=./scripts/migrate_bi_drupal/lagoon-sync.yml -p %project% -t %environment% -e local --ssh-key=/tmp/ssh-privatekey --no-interaction
+  - name: Run exit 0
+    type: exec
+    local: true
+    command: echo here && false
+#  - name: Set deploy target to BI3
+#    type: setdeploytarget
+#    target: 157
+#  - name: Deploy Branch
+#    type: deploy
+#  - name: Lagoon sync mysql
+#    local: true
+#    command: lagoon-sync
+
+#  - name: Scale up cli deployment
+#    type: scale
+#    deployment: cli
+#  - name: Run ls on deployment
+#    type: exec
+#    deployment: cli
+#    command: ls -lah
+#  - name: Copy to container
+#    type: copyto
+#    deployment: cli
+#    source: ./testcopy.txt
+#    destination: /tmp/testcopy.txt
+#  - name: Run ls on deployment tmp
+#    type: exec
+#    deployment: cli
+#    command: ls -lah /tmp
+rollback:
+  - name: Print Rollback
+    type: exec
+    local: true
+    command: echo "Rollback"

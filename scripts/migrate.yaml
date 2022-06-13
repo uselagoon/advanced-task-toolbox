@@ -3,11 +3,11 @@ steps:
     type: exec
     local: true
     command: echo "hello world"
-  - name: Set deploy target to BI3
-    type: setdeploytarget
-    target: 157
-  - name: Deploy Branch
-    type: deploy
+#  - name: Set deploy target to BI3
+#    type: setdeploytarget
+#    target: 157
+#  - name: Deploy Branch
+#    type: deploy
 
 #  - name: Scale up cli deployment
 #    type: scale

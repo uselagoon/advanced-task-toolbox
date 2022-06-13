@@ -24,6 +24,7 @@ class UtilityBelt
     {
         $deployment = $this->getDeployment($deploymentName);
 
+
         //TODO: bail when deployment can't be found ...
         //scale this puppy up
         if ($deployment->getDesiredReplicasCount() == 0) {

@@ -35,15 +35,25 @@ class RoboFile extends \Robo\Tasks
         $args->namespace = $this->grabNamespace($opts['namespace']);
         $args->token = $this->getToken($opts['token']);
         $args->project = !empty($opts['project']) ? $opts['project'] : getenv(
-          "PROJECT"
+          "LAGOON_PROJECT"
         );
         $args->sshKey = !empty($opts['sshKey']) ? $opts['sshKey'] : "/var/run/secrets/lagoon/ssh/ssh-privatekey";
         $args->environment = !empty($opts['environment']) ? $opts['environment'] : getenv(
-          "ENVIRONMENT"
+          "LAGOON_GIT_BRANCH"
         );
 
-        $runner = new \Migrator\Runner($args);
-        $runner->run();
+        try {
+            $runner = new \Migrator\Runner($args);
+            $runner->run();
+        } catch (\Exception $ex) {
+            printf("Got error running main steps: %s\n\n", $ex->getMessage());
+            if(!empty($migration['rollback'])) {
+                printf("Attempting to run rollback steps\n\n");
+                $args->steps = $migration['rollback'];
+                $runner = new \Migrator\Runner($args);
+                $runner->run();
+            }
+        }
     }
 
     private function loadYaml($filename)
