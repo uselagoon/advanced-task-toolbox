@@ -18,9 +18,12 @@ class RoboFile extends \Robo\Tasks
         'kubeContext' => null,
         'namespace' => null,
         'project' => null,
-        'environment' => null, 'sshKey' => null,
+        'environment' => null,
+        'sshKey' => null,
       ]
     ) {
+
+        \Migrator\LagoonUtilityBelt::setUpLagoon_yml();
 
         $opts = array_merge($opts, $this->processEnvironment());
 
@@ -65,20 +68,25 @@ class RoboFile extends \Robo\Tasks
 
     // define public methods as commands
     public function test(
-      $opts = ['token' => null, 'kubeContext' => null, 'namespace' => null]
+      $opts = ['token' => null, 'kubeContext' => null, 'namespace' => null, 'lagoonToken' => null]
     ) {
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         /** @var \RenokiCo\PhpK8s\Kinds\K8sNamespace $namespace */
         $belt = new \Migrator\LagoonUtilityBelt(
           $cluster,
-          $this->grabNamespace($opts['namespace'])
+          $this->grabNamespace($opts['namespace']),
+          null,
+          $opts['lagoonToken']
         );
-        var_dump(
-          $belt->getEnvironmentDetails(
-            "pro-bi-com-br-referenciagestao",
-            "master"
-          )
-        );
+//        var_dump(
+//          $belt->getEnvironmentDetails(
+//            "test6-drupal-example-simple",
+//            "test1copy"
+//          )
+//        );
+
+        $belt->setDeployTargetForEnvironment("test6-drupal-example-simple", "test1copy", 1);
+        $belt->deployEnvironment("test6-drupal-example-simple", "test1copy");
     }
 
 

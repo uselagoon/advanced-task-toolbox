@@ -14,5 +14,5 @@ RUN wget -O /usr/bin/lagoon-sync https://github.com/uselagoon/lagoon-sync/releas
 
 RUN composer install && touch /app/.lagoon.yml
 
-CMD /app/vendor/bin/robo run --migrateYaml=./scripts/migrate_bi_drupal.yaml
-#CMD sleep 1500
+#CMD /app/vendor/bin/robo run --migrateYaml=./scripts/migrate_test1_to_test6.yaml
+CMD lagoon config add --create-config -g $TASK_API_HOST/graphql -H $TASK_SSH_HOST -P $TASK_SSH_PORT -l amazeeio --force && sleep 1500 || true

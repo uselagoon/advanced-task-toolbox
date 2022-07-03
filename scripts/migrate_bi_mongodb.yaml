@@ -1,0 +1,5 @@
+steps:
+  - name: Dump mongodb
+    type: mongotransfer
+    targetProject: self
+    targetEnvironment: self
