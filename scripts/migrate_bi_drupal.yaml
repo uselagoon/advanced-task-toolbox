@@ -17,7 +17,7 @@ steps:
     target: 157
   - name: Deploy
     type: deploy
-    passIfTextExistsInLogs:
+    passIfTextExistsInLogs: "STEP Cronjob Cleanup: Completed"
   - name: Copy Database
     type: exec
     local: true

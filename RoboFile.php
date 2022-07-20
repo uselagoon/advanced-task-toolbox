@@ -28,7 +28,6 @@ class RoboFile extends \Robo\Tasks
         $opts = array_merge($opts, $this->processEnvironment());
 
         $migrateYaml = $opts['migrateYaml'];
-        var_dump($migrateYaml);
 
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         $migration = $this->loadYaml($migrateYaml);
@@ -76,7 +75,6 @@ class RoboFile extends \Robo\Tasks
         if(!$payload) return [];
         $payload = base64_decode($payload);
         if(!$payload) return [];
-//        var_dump($payload);
 
         $payload = json_decode($payload, true);
         if(json_last_error()) {

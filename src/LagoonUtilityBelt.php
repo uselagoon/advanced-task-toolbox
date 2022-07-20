@@ -2,7 +2,6 @@
 
 namespace Migrator;
 
-use \RenokiCo\PhpK8s\Kinds\K8sDeployment;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Lagoon\LagoonClient;
@@ -75,7 +74,7 @@ class LagoonUtilityBelt extends UtilityBelt
                     //here we need to grab the build's logs ...
                     $buildLog = $this->getBuildLogByBuildName($project, $environment, $id);
                     if(!empty($buildLog)) {
-                        if(strpos($buildLog, $passFailedDeploymentIfTextExists) >= 0) {
+                        if(str_contains($buildLog, $passFailedDeploymentIfTextExists)) {
                             $this->log("Found matching text in deploy log - treating deployment as success");
                             return true;
                         } else {
@@ -152,9 +151,6 @@ query getTasksForEnv($projName: string) {
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        //        return (array)$projDeets->data->projectByName;
-        //        foreach ($projectAdTasks->data->projectByName->environments)
-        //        var_dump($projectAdTasks);
     }
 
 
@@ -344,7 +340,7 @@ query projectByNameVar($name: String!) {
         $client = $this->getLagoonPHPClient();
         try {
             $projDeets = $client->json($query, ["name" => $project]);
-            var_dump($projDeets);
+
         } catch (\Exception $ex) {
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
