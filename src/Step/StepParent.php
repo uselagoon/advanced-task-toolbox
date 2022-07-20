@@ -3,12 +3,13 @@
 namespace Migrator\Step;
 
 use Migrator\LagoonUtilityBelt;
+use Migrator\LoggerTrait;
 use Migrator\RunnerArgs;
 use Migrator\UtilityBelt;
 
 abstract class StepParent implements StepInterface
 {
-
+    use LoggerTrait;
     protected $cluster;
     protected $namespace;
     protected $utilityBelt;

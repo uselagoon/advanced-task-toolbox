@@ -28,6 +28,7 @@ class RoboFile extends \Robo\Tasks
         $opts = array_merge($opts, $this->processEnvironment());
 
         $migrateYaml = $opts['migrateYaml'];
+        var_dump($migrateYaml);
 
         $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
         $migration = $this->loadYaml($migrateYaml);
@@ -66,29 +67,6 @@ class RoboFile extends \Robo\Tasks
         );
     }
 
-    // define public methods as commands
-    public function test(
-      $opts = ['token' => null, 'kubeContext' => null, 'namespace' => null, 'lagoonToken' => null]
-    ) {
-        $cluster = $this->grabCluster($opts['token'], $opts['kubeContext']);
-        /** @var \RenokiCo\PhpK8s\Kinds\K8sNamespace $namespace */
-        $belt = new \Migrator\LagoonUtilityBelt(
-          $cluster,
-          $this->grabNamespace($opts['namespace']),
-          null,
-          $opts['lagoonToken']
-        );
-//        var_dump(
-//          $belt->getEnvironmentDetails(
-//            "test6-drupal-example-simple",
-//            "test1copy"
-//          )
-//        );
-
-        $belt->setDeployTargetForEnvironment("test6-drupal-example-simple", "test1copy", 1);
-        $belt->deployEnvironment("test6-drupal-example-simple", "test1copy");
-    }
-
 
     /**
      * @return array
@@ -98,7 +76,8 @@ class RoboFile extends \Robo\Tasks
         if(!$payload) return [];
         $payload = base64_decode($payload);
         if(!$payload) return [];
-        var_dump($payload);
+//        var_dump($payload);
+
         $payload = json_decode($payload, true);
         if(json_last_error()) {
             var_dump(json_last_error_msg());

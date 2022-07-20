@@ -1,0 +1,6 @@
+steps:
+  - name: Run test
+    type: test
+  - name: Deploy
+    type: deploy
+    passIfTextExistsInLogs: "STEP Cronjob Cleanup: Completed"

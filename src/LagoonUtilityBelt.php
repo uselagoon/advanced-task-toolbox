@@ -22,12 +22,15 @@ class LagoonUtilityBelt extends UtilityBelt
 
     protected $lagoonName;
 
-    public static function setUpLagoon_yml() {
+    public static function setUpLagoon_yml()
+    {
         $TASK_API_HOST = getenv("TASK_API_HOST");
         $TASK_SSH_HOST = getenv("TASK_SSH_HOST");
         $TASK_SSH_PORT = getenv("TASK_SSH_PORT");
-        if(!empty($TASK_API_HOST) && !empty($TASK_SSH_HOST) && !empty($TASK_SSH_PORT)) {
-            exec("lagoon config add --create-config -g $TASK_API_HOST/graphql -H $TASK_SSH_HOST -P $TASK_SSH_PORT -l default --force && lagoon login --ssh-key /var/run/secrets/lagoon/ssh/ssh-privatekey");
+        if (!empty($TASK_API_HOST) && !empty($TASK_SSH_HOST) && !empty($TASK_SSH_PORT)) {
+            exec(
+              "lagoon config add --create-config -g $TASK_API_HOST/graphql -H $TASK_SSH_HOST -P $TASK_SSH_PORT -l default --force && lagoon login --ssh-key /var/run/secrets/lagoon/ssh/ssh-privatekey"
+            );
         }
     }
 
@@ -48,13 +51,82 @@ class LagoonUtilityBelt extends UtilityBelt
     }
 
     // Here follows arbitrary deployment functions
-    public function deployEnvironment($project, $environment)
+    public function deployEnvironment($project, $environment, $passFailedDeploymentIfTextExists = null)
     {
+        $this->log(sprintf("About to deploy %s:%s", $project, $environment));
         $resp = $this->runLagoonCommand(
           "deploy latest -p {$project} -e {$environment} --returnData --force"
         );
         $id = trim($resp);
-        $this->waitForDeploymentToComplete($project, $environment, $id);
+        $completionState = $this->waitForDeploymentToComplete(
+          $project,
+          $environment,
+          $id
+        );
+        switch ($completionState) {
+            case ("complete"):
+                return true;
+                break;
+            case ("failed"):
+                $this->log("Got completionstate: " . $completionState);
+
+                if(!empty($passFailedDeploymentIfTextExists)) {
+                    $this->log("Checking if text '{$passFailedDeploymentIfTextExists}' exists in log for build {$id}");
+                    //here we need to grab the build's logs ...
+                    $buildLog = $this->getBuildLogByBuildName($project, $environment, $id);
+                    if(!empty($buildLog)) {
+                        if(strpos($buildLog, $passFailedDeploymentIfTextExists) >= 0) {
+                            $this->log("Found matching text in deploy log - treating deployment as success");
+                            return true;
+                        } else {
+                            throw new \Exception("Deployment failed - no string '{$passFailedDeploymentIfTextExists}' not found in build log");
+                        }
+                    } else {
+                        throw new \Exception("Deployment failed - no buildlog found");
+                    }
+                } else {
+                    throw new \Exception("Deployment failed - exiting");
+                }
+                break;
+            case ("cancelled"):
+                throw new \Exception("Deployment was cancelled by user");
+                break;
+        }
+    }
+
+    public function getBuildLogByBuildName($project, $environment, $buildId) {
+        $query = '
+query getBuildlog($projName: String!, $buildName: String!) {
+ projectByName(name: $projName) {
+  environments {
+    name
+		deployments(name: $buildName) {
+			buildLog
+    }
+  }
+}
+}';
+
+        $client = $this->getLagoonPHPClient();
+        try {
+            $buildLogs = $client->json($query, ["projName" => $project, "buildName" => $buildId]);
+
+            foreach($buildLogs->data->projectByName->environments as $e) {
+
+                if ($e->name == $environment) {
+
+                    foreach ($e->deployments as $deployment) {
+                        if(!empty($deployment->buildLog)) {
+                            return $deployment->buildLog;
+                        }
+                    }
+                  }
+            }
+            return FALSE;
+        } catch (\Exception $ex) {
+            //TODO: do we want to implement any non-terrible error handling?
+            throw $ex;
+        }
     }
 
     public function startTaskInEnvironment($project, $environment, $taskName)
@@ -82,7 +154,7 @@ query getTasksForEnv($projName: string) {
         }
         //        return (array)$projDeets->data->projectByName;
         //        foreach ($projectAdTasks->data->projectByName->environments)
-        var_dump($projectAdTasks);
+        //        var_dump($projectAdTasks);
     }
 
 
@@ -92,6 +164,7 @@ query getTasksForEnv($projName: string) {
       $openshiftId
     ) {
         $e = $this->getEnvironmentDetails($project, $environmentName);
+        //TODO: relook this?
         //        if(!empty($e['openshift']) && !empty($e['openshift']->id)) {
         //            if($e['openshift']->id == $target) {
         //                throw new \Exception("Deploy target for {$project}:{$e} already set to {$target}");
@@ -105,8 +178,8 @@ query getTasksForEnv($projName: string) {
         $highestWeight = 99;
         foreach ($p['deployTargetConfigs'] as $deployTargetConfig) {
             //if this holds, we have an exact match - we have to remove it
-            print $deployTargetConfig->branches . "\n";
-            if($deployTargetConfig->weight >= $highestWeight) {
+            //            print $deployTargetConfig->branches . "\n";
+            if ($deployTargetConfig->weight >= $highestWeight) {
                 $highestWeight = $deployTargetConfig->weight + 1;
             }
             if ($deployTargetConfig->branches == $environmentName) {
@@ -120,7 +193,12 @@ query getTasksForEnv($projName: string) {
 
 
         //This will now open up the possibility of us actually setting the
-        $this->addDeployTargetForProject($p['id'], $environmentName, $openshiftId, $highestWeight);
+        $this->addDeployTargetForProject(
+          $p['id'],
+          $environmentName,
+          $openshiftId,
+          $highestWeight
+        );
 
         $this->updateEnvironmentDeployTarget($e['id'], $openshiftId);
 
@@ -156,7 +234,9 @@ query getTasksForEnv($projName: string) {
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        var_dump($result);
+        $this->log(
+          "Updating setting of deploy target result: " . print_r($result, true)
+        );
     }
 
 
@@ -193,7 +273,12 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        var_dump($result);
+        $this->log(
+          "Updating adding of deploy target config's result: " . print_r(
+            $result,
+            true
+          )
+        );
     }
 
 
@@ -222,7 +307,12 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        var_dump($result);
+        $this->log(
+          "Updating setting of deleting deploy target config result: " . print_r(
+            $result,
+            true
+          )
+        );
     }
 
 
@@ -267,7 +357,6 @@ query projectByNameVar($name: String!) {
     {
         //get project id first
         $projectDetails = $this->getProjectDetailsByName($project);
-        var_dump($projectDetails);
         $query = 'query environmentByNameVar($projectId: Int!, $envName: String!) {
   environmentByName(project: $projectId, name: $envName) {
     id
@@ -335,22 +424,25 @@ query projectByNameVar($name: String!) {
             }
             $found = false;
             foreach ($obj->data as $deployment) {
-                var_dump(
-                  "`{$deployment->name}` looking for  `{$deploymentId}`"
-                );
                 if ($deployment->name == $deploymentId) {
-                    printf(
-                      "Found %s with status %s",
-                      $deploymentId,
-                      $deployment->status
+                    $this->log(
+                      sprintf(
+                        "Found %s with status %s",
+                        $deploymentId,
+                        $deployment->status
+                      )
                     );
-                    if ($deployment->status == "complete") {
-                        return true;
-                    } elseif ($deployment->status == "failed") {
-                        return false;
+
+                    if (in_array(
+                      $deployment->status,
+                      ["complete", "failed", "cancelled"] //End states
+                    )) {
+                        return $deployment->status;
                     }
 
-                    print("Deployment {$deploymentId} currently in state: " . $deployment->status);
+                    $this->log(
+                      "Deployment {$deploymentId} currently in state: " . $deployment->status
+                    );
                     $found = true;
                 }
             }
@@ -359,7 +451,9 @@ query projectByNameVar($name: String!) {
                   "Could not find build {$deploymentId} in list of deployments for {$project}:{$environment}"
                 );
             }
-            print "Waiting for " . self::$DEPLOY_WAIT_TIMEOUT . " to see status of deployment";
+            $this->log(
+              "Waiting for " . self::$DEPLOY_WAIT_TIMEOUT . " to see status of deployment"
+            );
             sleep(self::$DEPLOY_WAIT_TIMEOUT);
         }
         throw new \Exception(
@@ -374,10 +468,11 @@ query projectByNameVar($name: String!) {
             $commandFull .= " --ssh-key {$this->lagoonSshKeyPath}";
         }
 
-        if(!empty($this->lagoonName)) {
+        if (!empty($this->lagoonName)) {
             $commandFull .= " -l {$this->lagoonName}";
         }
 
+        $this->log("Running lagoon command: $commandFull");
         $process = Process::fromShellCommandline($commandFull);
         $process->run();
 

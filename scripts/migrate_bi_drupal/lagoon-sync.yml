@@ -8,4 +8,4 @@ lagoon-sync:
       database: "${MARIADB_DATABASE:-drupal}"
   files:
     config:
-      sync-directory: "/app/web/sites/default/files"
+      sync-directory: "/app/docroot/sites/default/files/"

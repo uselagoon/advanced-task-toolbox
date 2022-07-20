@@ -21,6 +21,8 @@ class Exec extends StepParent {
 
         if(!empty($args['local']) && $args['local'] == "true" && !empty($command)) {
 
+            $this->log("About to run command locally: " . $args['command']);
+
             $process = Process::fromShellCommandline($command);
             $process->run();
 
@@ -28,7 +30,7 @@ class Exec extends StepParent {
                 throw new ProcessFailedException($process);
             }
 
-            var_dump($process->getOutput());
+            $this->log("Process output : " . $process->getOutput());
             return;
         }
 
