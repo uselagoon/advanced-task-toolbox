@@ -1,6 +1,0 @@
-steps:
-  - name: Change deploy target
-    type: setdeploytarget
-    target: 3
-  - name: Deploy
-    type: deploy

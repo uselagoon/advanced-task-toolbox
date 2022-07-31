@@ -1,8 +1,0 @@
-#This task can be used to fork an environment
-steps:
-  - name: Set service name
-    type: Setservicename
-    servicename: bomokotest
-  - name: Wait for signal
-    type: waitForFile
-    filename: /tmp/taskdone
