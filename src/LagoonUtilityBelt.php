@@ -160,12 +160,13 @@ query getTasksForEnv($projName: string) {
       $openshiftId
     ) {
         $e = $this->getEnvironmentDetails($project, $environmentName);
-        //TODO: relook this?
-        //        if(!empty($e['openshift']) && !empty($e['openshift']->id)) {
-        //            if($e['openshift']->id == $target) {
-        //                throw new \Exception("Deploy target for {$project}:{$e} already set to {$target}");
-        //            }
-        //        }
+        if (!empty($e['openshift']) && !empty($e['openshift']->id)) {
+            if ($e['openshift']->id == $openshiftId) {
+                throw new \Exception(
+                  "Deploy target for $project:$e already set to $openshiftId"
+                );
+            }
+        }
 
         $p = $this->getProjectDetailsByName($project);
 

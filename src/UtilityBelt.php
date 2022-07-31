@@ -47,7 +47,7 @@ class UtilityBelt
                 }
             }
             if (!$ready) {
-                throw new \Exception("COULD NOT SCALE");
+                throw new \Exception("COULD NOT SCALE DEPLOYMENT $deploymentName");
             }
         } else {
             $this->log(
@@ -140,8 +140,6 @@ class UtilityBelt
         return $process->getOutput();
 
     }
-
-    //TODO: get/parse docker-compose.json to work out file mappings?
 
 
 }
