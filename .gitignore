@@ -1,3 +1,5 @@
 /vendor/
 .idea
 lagoon-sync
+/scripts/*
+!/scripts/default.yaml
