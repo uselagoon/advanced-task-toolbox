@@ -18,5 +18,8 @@ class Tagnamespace extends StepParent
                 $command = "create secret  generic advanced-task-toolbox-{$label}";
                 $this->log("Going to create secret 'advanced-task-toolbox-{$label}' in '{$this->namespace}' ");
                 $this->utilityBelt->runKubectl($command, $this->token);
+                $this->log("Going to label secret for searching with 'advanced-task-toolbox-{$label}'");
+                $command = "label secret advanced-task-toolbox-{$label} advanced-task-toolbox-{$label}=true";
+                $this->utilityBelt->runKubectl($command, $this->token);
     }
 }
