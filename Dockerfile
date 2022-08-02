@@ -10,9 +10,8 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 
 RUN curl -L "https://github.com/uselagoon/lagoon-cli/releases/download/v0.12.5/lagoon-cli-v0.12.5-linux-amd64" -o /usr/local/bin/lagoon && chmod +x /usr/local/bin/lagoon
 
-RUN wget -O /usr/bin/lagoon-sync https://github.com/uselagoon/lagoon-sync/releases/download/v0.6.0/lagoon-sync_0.6.0_linux_amd64 && chmod +x /usr/bin/lagoon-sync && true
+RUN wget -O /usr/bin/lagoon-sync https://github.com/uselagoon/lagoon-sync/releases/download/v0.6.1/lagoon-sync_0.6.1_linux_amd64 && chmod +x /usr/bin/lagoon-sync && true
 
 RUN composer install && touch /app/.lagoon.yml
 
 CMD lagoon config add --create-config -g $TASK_API_HOST/graphql -H $TASK_SSH_HOST -P $TASK_SSH_PORT -l amazeeio --force && /app/vendor/bin/robo run
-#CMD lagoon config add --create-config -g $TASK_API_HOST/graphql -H $TASK_SSH_HOST -P $TASK_SSH_PORT -l amazeeio --force && sleep 150000 || true
