@@ -54,7 +54,7 @@ Assertions are simple boolean checks that will throw an exception if they are no
 With the `assertTrue` and `assertFalse` fields you are able to specify the conditions under which an assertion will pass.
 Currently, the toolbox supports the following assertions.
 
-# currentopenshift
+### currentopenshift
 
 This assertion will allow you to test whether the target environment is _currently_ on a particular deploytarget.
 
@@ -76,7 +76,7 @@ If we wanted to assert that it _shouldn't_ currently be 3, we could do the follo
 
 Typically you would run this as part of the `prerequisites` step to ensure you aren't going to apply a set of transformations in the wrong namespace.
 
-# environmenttype
+### environmenttype
 
 This allows you to assert that an environment is either "production" or "development"
 
