@@ -250,6 +250,7 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
     deployTarget: $deployTargetId
     weight: $weight
     branches: $branches
+    pullrequests: "false"
   }) {
     id
   }
