@@ -86,7 +86,7 @@ class Runner
         if ($assertionResult != $expectedAssertionResult) {
             $expectedAssertionResultString = $expectedAssertionResult ? 'TRUE' : 'FALSE';
             $assertionResultString = $assertionResult ? 'TRUE' : 'FALSE';
-            throw new \Exception("Assertion {$step['name']} failed - expected {$expectedAssertionResultString} got $assertionResultString");
+            throw new \Exception("Assertion '{$step['name']}' failed - expected {$expectedAssertionResultString} got $assertionResultString");
         }
     }
 
