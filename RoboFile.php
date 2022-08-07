@@ -45,7 +45,25 @@ class RoboFile extends \Robo\Tasks
           "LAGOON_GIT_BRANCH"
         );
 
+        //Here we add a pre-runner set of steps - this can be used for assertions
+        //and does _not_ trigger a rollback
+
         try {
+            if(!empty($migration['prerequisites'])) {
+                printf("Found prerequisite steps - will run with no rollback\n\n");
+                $args->steps = $migration['prerequisites'];
+                $runner = new \Migrator\Runner($args);
+                $runner->run();
+            } else {
+                printf("No prerequisites found - proceeding to run main steps\n\n");
+            }
+        } catch (\Exception $ex) {
+            printf("Prerequistes failed with the following message: %s \n\n exiting", $ex->getMessage());
+            exit(1);
+        }
+
+        try {
+            $args->steps = $migration['steps'];
             $runner = new \Migrator\Runner($args);
             $runner->run();
         } catch (\Exception $ex) {
