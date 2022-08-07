@@ -360,6 +360,7 @@ query projectByNameVar($name: String!) {
     id
     name
     openshiftProjectPattern
+    environmentType
     openshift {
       id
       friendlyName

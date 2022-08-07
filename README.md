@@ -76,6 +76,17 @@ If we wanted to assert that it _shouldn't_ currently be 3, we could do the follo
 
 Typically you would run this as part of the `prerequisites` step to ensure you aren't going to apply a set of transformations in the wrong namespace.
 
+# environmenttype
+
+This allows you to assert that an environment is either "production" or "development"
+
+```
+- name: Current environment should be development, not production
+  assertTrue: environmenttype
+  environmentType: development
+```
+
+
 ## Step types
 
 Currently, the toolbox supports the following functions.
