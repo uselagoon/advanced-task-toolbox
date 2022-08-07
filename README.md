@@ -4,14 +4,20 @@ This application provides a generic toolbox that is meant to abstract generic in
 
 Scripts are written using an ansible-like yaml format. In general the structure of the scripts are as follows
 ```
+prerequisites:
+    - <script steps appear here>
 steps:
     - <script steps appear here>
 rollback:
     - <steps to rollback appear here>
 ```
-There are two top level sequences, `steps` and `rollback`. 
+There are three top level sequences, `prerequisites`, `steps` and `rollback`.
 The entries in `steps` specify the actual steps that will be run when the application is invoked, while the (optional) `rollback` sequence defines steps that are run if any of the steps in `steps` sequence fail.
 Any steps that can appear in the `steps` sequence can appear in `rollback`.
+The `prerequisites` array is optional and will play any steps that can appear in `steps` except that if any of these fail,
+the task will exit and the rollback steps *will not be run*. 
+`prerequisites` is a very good place to run any *assertions* (below) to ensure that the task can and should be run on the target environment.  
+
 The kinds of steps supported are described below.
 
 ---
@@ -41,6 +47,34 @@ Second:
 Advanced tasks are potentially very destructive and should be used _very carefully_.
 
 ***
+
+## Assertions
+
+Assertions are simple boolean checks that will throw an exception if they are not met.
+With the `assertTrue` and `assertFalse` fields you are able to specify the conditions under which an assertion will pass.
+Currently, the toolbox supports the following assertions.
+
+# currentopenshift
+
+This assertion will allow you to test whether the target environment is _currently_ on a particular deploytarget.
+
+For example, if we wanted to assert that a particular environment's deploytarget should be 3, we could use
+
+```
+  - name: Current openshift should be 3
+    assertTrue: currentopenshift
+    target: 3
+```
+
+If we wanted to assert that it _shouldn't_ currently be 3, we could do the following.
+
+```
+  - name: Current openshift should NOT be 3
+    assertFalse: currentopenshift
+    target: 3
+```
+
+Typically you would run this as part of the `prerequisites` step to ensure you aren't going to apply a set of transformations in the wrong namespace.
 
 ## Step types
 
