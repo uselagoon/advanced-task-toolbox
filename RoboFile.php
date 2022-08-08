@@ -73,6 +73,7 @@ class RoboFile extends \Robo\Tasks
                 $args->steps = $migration['rollback'];
                 $runner = new \Migrator\Runner($args);
                 $runner->run();
+                exit(1);
             }
         }
     }
