@@ -92,7 +92,23 @@ class UtilityBelt
         $pod = $this->getPodFromDeployment($deploymentName);
         $this->log("About to to execute `{$command}` in pod " . $pod->getName());
         $results = $pod->exec(['/bin/sh', '-c', $command]);
-        $this->log("Completed execution: " . var_export($results));
+
+        // iterate through array and check for channel "error"
+
+        $prettyOutput = "";
+        if(is_array($results)) {
+            foreach ($results as $result) {
+                if(key_exists('channel', $result) && $result['channel'] == 'error') {
+                    $this->log("Failed execution: " . var_export($results));
+                    throw new \Exception("Exec failed with the following error: " . $result['output']);
+                }
+                if(key_exists('output', $result)) {
+                    $prettyOutput .= $result['output'] . "\n";
+                }
+            }
+        }
+
+        $this->log("Completed execution: \n" . $prettyOutput);
     }
 
     /**
