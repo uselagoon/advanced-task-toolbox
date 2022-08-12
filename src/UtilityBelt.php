@@ -36,12 +36,12 @@ class UtilityBelt
             $this->log("Scaling up deployment for " . $deploymentName);
             $deployment->scale(1);
             $ready = false;
-            for ($n = 0; $n <= 3; $n++) {
+            for ($n = 0; $n <= 12; $n++) {
                 sleep(10);
                 $deployment->refresh();
                 $readyReplicaCount = $deployment->getReadyReplicasCount();
-                $this->log("ReadyReplica Count :%s\n", $readyReplicaCount);
-                if ($readyReplicaCount > 0) {
+                $this->log(sprintf("ReadyReplica Count :%s\n", $readyReplicaCount));
+                if ($readyReplicaCount == 1) {
                     $ready = true;
                     break;
                 }
