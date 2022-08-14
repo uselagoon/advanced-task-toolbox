@@ -10,7 +10,8 @@
         "uselagoon/lagoon-php-sdk": "^1.6",
         "renoki-co/php-k8s": "^3.7",
         "symfony/process": "^6.1",
-        "symfony/yaml": "^6.1"
+        "symfony/yaml": "^6.1",
+        "league/climate": "^3.8"
     },
     "license": "MIT"
 }
