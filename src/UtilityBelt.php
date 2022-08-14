@@ -29,6 +29,8 @@ class UtilityBelt
     {
         $deployment = $this->getDeployment($deploymentName);
 
+        $SLEEP_WAITING_FOR_DEPLOYMENT = 10; //sleep for 10 seconds a go
+        $NUMBER_SLEEPS_TO_TAKE_WAITING_FOR_DEPLOYMENT = 30; //We'll wait 5 minutes if we're sleeping for 10 seconds
 
         //TODO: bail when deployment can't be found ...
         //scale this puppy up
@@ -36,8 +38,8 @@ class UtilityBelt
             $this->log("Scaling up deployment for " . $deploymentName);
             $deployment->scale(1);
             $ready = false;
-            for ($n = 0; $n <= 12; $n++) {
-                sleep(10);
+            for ($n = 0; $n <= $NUMBER_SLEEPS_TO_TAKE_WAITING_FOR_DEPLOYMENT; $n++) {
+                sleep($SLEEP_WAITING_FOR_DEPLOYMENT);
                 $deployment->refresh();
                 $readyReplicaCount = $deployment->getReadyReplicasCount();
                 $this->log(sprintf("ReadyReplica Count :%s\n", $readyReplicaCount));
