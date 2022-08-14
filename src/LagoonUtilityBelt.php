@@ -235,9 +235,9 @@ query getTasksForEnv($projName: string) {
         $this->log(
           "Successfully updated deploy target to {$deployTargetId}"
         );
-//        $this->log(
-//          "Updating setting of deploy target result: " . print_r($result, true)
-//        );
+        $this->logVerbose(
+          "Updating setting of deploy target result: " . print_r($result, true)
+        );
     }
 
 
@@ -276,12 +276,12 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             throw $ex;
         }
         $this->log("Successfully updated deploy target config");
-//        $this->log(
-//          "Updating adding of deploy target config's result: " . print_r(
-//            $result,
-//            true
-//          )
-//        );
+        $this->logVerbose(
+          "Updating adding of deploy target config's result: " . print_r(
+            $result,
+            true
+          )
+        );
     }
 
 
@@ -311,12 +311,12 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             throw $ex;
         }
         $this->log("Successfully deleted deploy target config");
-//        $this->log(
-//          "Updating setting of deleting deploy target config result: " . print_r(
-//            $result,
-//            true
-//          )
-//        );
+        $this->logVerbose(
+          "Updating setting of deleting deploy target config result: " . print_r(
+            $result,
+            true
+          )
+        );
     }
 
 
@@ -422,7 +422,7 @@ query projectByNameVar($name: String!) {
         $commandText = "list deployments -p {$project} -e {$environment} --output-json";
 
         for ($i = 0; $i < self::$DEPLOY_WAIT_ATTEMPTS; $i++) {
-            $resp = $this->runLagoonCommand($commandText);
+            $resp = $this->runLagoonCommand($commandText, true);
             $obj = json_decode(trim($resp));
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception(json_last_error_msg());
@@ -430,7 +430,7 @@ query projectByNameVar($name: String!) {
             $found = false;
             foreach ($obj->data as $deployment) {
                 if ($deployment->name == $deploymentId) {
-                    $this->log(
+                    $this->logVerbose(
                       sprintf(
                         "Found %s with status %s",
                         $deploymentId,
@@ -445,7 +445,7 @@ query projectByNameVar($name: String!) {
                         return $deployment->status;
                     }
 
-                    $this->log(
+                    $this->logVerbose(
                       "Deployment {$deploymentId} currently in state: " . $deployment->status
                     );
                     $found = true;
@@ -466,7 +466,7 @@ query projectByNameVar($name: String!) {
         );
     }
 
-    protected function runLagoonCommand($command)
+    protected function runLagoonCommand($command, $quiet = false)
     {
         $commandFull = "lagoon " . $command;
         if (!empty($this->lagoonSshKeyPath)) {
@@ -477,7 +477,11 @@ query projectByNameVar($name: String!) {
             $commandFull .= " -l {$this->lagoonName}";
         }
 
-        $this->log("Running lagoon command: $commandFull");
+        if(!$quiet) {
+            $this->log("Running lagoon command: $commandFull");
+        } else {
+            $this->logVerbose("Running lagoon command: $commandFull");
+        }
         $process = Process::fromShellCommandline($commandFull);
         $process->run();
 
