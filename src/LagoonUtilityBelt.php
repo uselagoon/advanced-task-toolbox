@@ -233,8 +233,11 @@ query getTasksForEnv($projName: string) {
             throw $ex;
         }
         $this->log(
-          "Updating setting of deploy target result: " . print_r($result, true)
+          "Successfully updated deploy target to {$deployTargetId}"
         );
+//        $this->log(
+//          "Updating setting of deploy target result: " . print_r($result, true)
+//        );
     }
 
 
@@ -272,12 +275,13 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        $this->log(
-          "Updating adding of deploy target config's result: " . print_r(
-            $result,
-            true
-          )
-        );
+        $this->log("Successfully updated deploy target config");
+//        $this->log(
+//          "Updating adding of deploy target config's result: " . print_r(
+//            $result,
+//            true
+//          )
+//        );
     }
 
 
@@ -306,12 +310,13 @@ mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight:
             //TODO: do we want to implement any non-terrible error handling?
             throw $ex;
         }
-        $this->log(
-          "Updating setting of deleting deploy target config result: " . print_r(
-            $result,
-            true
-          )
-        );
+        $this->log("Successfully deleted deploy target config");
+//        $this->log(
+//          "Updating setting of deleting deploy target config result: " . print_r(
+//            $result,
+//            true
+//          )
+//        );
     }
 
 
