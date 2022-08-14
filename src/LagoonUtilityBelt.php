@@ -70,7 +70,8 @@ class LagoonUtilityBelt extends UtilityBelt
                 $this->log("Got completionstate: " . $completionState);
 
                 if(!empty($passFailedDeploymentIfTextExists)) {
-                    $this->log("Checking if text '{$passFailedDeploymentIfTextExists}' exists in log for build {$id}");
+                    $this->log("Waiting 2 minutes for log shipping and then checking if text '{$passFailedDeploymentIfTextExists}' exists in log for build {$id}");
+                    sleep(120);
                     //here we need to grab the build's logs ...
                     $buildLog = $this->getBuildLogByBuildName($project, $environment, $id);
                     if(!empty($buildLog)) {
