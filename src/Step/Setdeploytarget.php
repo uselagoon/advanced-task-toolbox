@@ -6,7 +6,7 @@ use Migrator\LagoonUtilityBelt;
 
 class Setdeploytarget extends StepParent {
 
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         //check we have all the args we need
         if(empty($args['target'])) {

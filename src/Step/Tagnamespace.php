@@ -9,7 +9,7 @@ namespace Migrator\Step;
 class Tagnamespace extends StepParent
 {
 
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
                 if (empty($args['label'])) {
                     throw new \Exception("Tagnamespace step requires a 'label'");

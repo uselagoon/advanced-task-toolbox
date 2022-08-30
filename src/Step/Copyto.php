@@ -3,7 +3,7 @@
 namespace Migrator\Step;
 
 class Copyto extends StepParent {
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         if(empty($args['deployment']) || empty($args['source']) || empty($args['destination'])) {
             throw new \Exception("An Exec step requires `deployment`, `source`, and `destination` arguments");

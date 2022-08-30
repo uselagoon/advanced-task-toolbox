@@ -15,7 +15,7 @@ use Symfony\Component\Process\Process;
 
 class Exec extends StepParent {
 
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         $command = $this->doTextSubstitutions($args['command']);
 

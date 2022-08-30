@@ -1,5 +1,6 @@
 <?php
 
+use League\CLImate\CLImate;
 use RenokiCo\PhpK8s\KubernetesCluster;
 use Migrator\UtilityBelt;
 
@@ -24,7 +25,7 @@ class RoboFile extends \Robo\Tasks
     ) {
 
         \Migrator\LagoonUtilityBelt::setUpLagoon_yml();
-
+        $climate = new CLImate;
         $opts = array_merge($opts, $this->processEnvironment());
 
         $migrateYaml = $opts['migrateYaml'];
@@ -50,12 +51,12 @@ class RoboFile extends \Robo\Tasks
 
         try {
             if(!empty($migration['prerequisites'])) {
-                printf("Found prerequisite steps - will run with no rollback\n\n");
+                $climate->out("Found prerequisite steps - will run with no rollback\n\n");
                 $args->steps = $migration['prerequisites'];
                 $runner = new \Migrator\Runner($args);
                 $runner->run();
             } else {
-                printf("No prerequisites found - proceeding to run main steps\n\n");
+                $climate->out("No prerequisites found - proceeding to run main steps\n\n");
             }
         } catch (\Exception $ex) {
             printf("Prerequistes failed with the following message: %s \n\n exiting", $ex->getMessage());
@@ -67,9 +68,14 @@ class RoboFile extends \Robo\Tasks
             $runner = new \Migrator\Runner($args);
             $runner->run();
         } catch (\Exception $ex) {
-            printf("Got error running main steps: %s\n\n", $ex->getMessage());
+
+            $climate->border('*');
+            $climate->border('*');
+            $climate->flank(sprintf("Got error running main steps: %s\n\n", $ex->getMessage()));
+            $climate->border('*');
+            $climate->border('*');
             if(!empty($migration['rollback'])) {
-                printf("Attempting to run rollback steps\n\n");
+                $climate->out("Attempting to run rollback steps\n\n");
                 $args->steps = $migration['rollback'];
                 $runner = new \Migrator\Runner($args);
                 $runner->run();

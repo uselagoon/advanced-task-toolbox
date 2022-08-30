@@ -6,7 +6,7 @@ use Migrator\LagoonUtilityBelt;
 
 class Mongotransfer extends StepParent {
 
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         //There are two possibilities
         // 1. this is a mongodbaas setup

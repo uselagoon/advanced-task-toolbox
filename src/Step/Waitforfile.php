@@ -8,7 +8,7 @@ class Waitforfile extends StepParent {
 
     static $SLEEP = 1;
 
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         //check we have all the args we need
         if(empty($args['filename'])) {

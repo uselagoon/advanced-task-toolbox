@@ -3,7 +3,7 @@
 namespace Migrator\Step;
 
 class Setservicename extends StepParent {
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         if(empty($args['servicename'])) {
             throw new \Exception("Setservicename steps require a service name");

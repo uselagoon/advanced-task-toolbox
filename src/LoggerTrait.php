@@ -1,18 +1,22 @@
 <?php
 
 namespace Migrator;
+use League\CLImate\CLImate;
+
 
 trait LoggerTrait
 {
     public function log($message)
     {
-        printf("%s :- %s \n", date("H:i:s"), $message);
+        $climate = new CLImate;
+        $climate->out(sprintf("%s :- %s ", date("H:i:s"), $message));
     }
 
     public function logVerbose($message)
     {
+        $climate = new CLImate;
         if(strtolower(getenv("LAGOON_LOG_VERBOSE")) == "true" ) {
-            printf("%s :- %s \n", date("H:i:s"), $message);
+            $climate->out(sprintf("%s :- %s ", date("H:i:s"), $message));
         }
     }
 

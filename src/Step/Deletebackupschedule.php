@@ -8,7 +8,7 @@ namespace Migrator\Step;
  */
 
 class Deletebackupschedule extends StepParent {
-    public function run(array $args)
+    public function runImplementation(array $args)
     {
         $command = "delete schedule.backup.appuio.ch k8up-lagoon-backup-schedule";
         $this->utilityBelt->runKubectl($command, $this->token);
