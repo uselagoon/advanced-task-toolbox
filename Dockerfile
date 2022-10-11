@@ -8,7 +8,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check && \
     chmod +x kubectl && mv kubectl /usr/local/bin
 
-RUN curl -L "https://github.com/uselagoon/lagoon-cli/releases/download/v0.12.5/lagoon-cli-v0.12.5-linux-amd64" -o /usr/local/bin/lagoon && chmod +x /usr/local/bin/lagoon
+RUN curl -L "https://github.com/uselagoon/lagoon-cli/releases/download/v0.15.2/lagoon-cli-v0.15.2-linux-amd64" -o /usr/local/bin/lagoon && chmod +x /usr/local/bin/lagoon
 
 RUN wget -O /usr/bin/lagoon-sync https://github.com/uselagoon/lagoon-sync/releases/download/v0.6.1/lagoon-sync_0.6.1_linux_amd64 && chmod +x /usr/bin/lagoon-sync && true
 
