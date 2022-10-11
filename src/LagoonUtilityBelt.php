@@ -248,7 +248,7 @@ query getTasksForEnv($projName: string) {
       $weight = 99
     ) {
         $query = '
-mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight: Int!, $branches: String)  {
+mutation addDeployTargetConfig($projectId: Int!, $deployTargetId: Int!, $weight: Int!, $branches: String!)  {
   addDeployTargetConfig(input: {
     project: $projectId
     deployTarget: $deployTargetId
