@@ -13,7 +13,7 @@ class Scale extends StepParent {
             throw new \Exception("Exec steps require a `deployment` argument");
         }
 
-        $this->utilityBelt->scaleUpDeployment("cli");
+        $this->utilityBelt->scaleUpDeployment($args['deployment']);
     }
 
 }
