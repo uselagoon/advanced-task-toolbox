@@ -12,6 +12,12 @@ trait LoggerTrait
         $climate->out(sprintf("%s :- %s ", date("H:i:s"), $message));
     }
 
+    public function logBold($message)
+    {
+      $climate = new CLImate;
+      $climate->shout(sprintf("%s :- %s ", date("H:i:s"), $message));
+    }
+
     public function logVerbose($message)
     {
         $climate = new CLImate;
