@@ -4,6 +4,7 @@ namespace Migrator;
 
 class Runner
 {
+    use LoggerTrait;
 
     protected $steps;
 
@@ -112,7 +113,26 @@ class Runner
         }
 
         $stepObj = new $classname($this->args);
-        $stepObj->run($step);
+
+        $retryTimes = !empty($step['retry']) ? $step['retry'] : 0;
+        $retrySleep = !empty($step['retryDelaySeconds']) ? $step['retryDelaySeconds'] : 10;
+        $retry = false;
+        do {
+          try  {
+            $stepObj->run($step);
+          } catch (\Exception $exception) {
+            if($retryTimes > 0) {
+              $this->logBold(sprintf("Exception in step %s, retrys left %d - message: %s\n", $step['name'], $retryTimes, $exception->getMessage()));
+              $retry = true;
+              $retryTimes--;
+              //Let's wait a few before retrying ...
+              sleep($retrySleep);
+            } else {
+              $retry = false;
+              throw $exception;
+            }
+          }
+        } while($retry);
     }
 
 }
