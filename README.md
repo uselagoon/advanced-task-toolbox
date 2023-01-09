@@ -86,6 +86,15 @@ This allows you to assert that an environment is either "production" or "develop
   environmentType: development
 ```
 
+### fileexists
+
+Will assert that a particular file exists on disk before running the migration
+
+```
+  - name: Test file exist
+    assertTrue: fileexists
+    filename: /tmp/.testfile
+```
 
 ## Retrying on failure
 
