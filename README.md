@@ -87,6 +87,14 @@ This allows you to assert that an environment is either "production" or "develop
 ```
 
 
+## Retrying on failure
+
+All steps can take the following optional fields to set retry parameters
+```
+    retry: 3 #optional, default 0 - the number of times to retry step if failed
+    retryDelaySeconds: 5 #optional, default 10 - the delay between retry attempts
+```
+
 ## Step types
 
 Currently, the toolbox supports the following functions.
