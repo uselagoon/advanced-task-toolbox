@@ -11,8 +11,8 @@ class Deploy extends StepParent {
         //check we have all the args we need
         $passIfTextExistsInLogs = key_exists("passIfTextExistsInLogs", $args) ? $args["passIfTextExistsInLogs"] : null;
         $variables = !empty($args['buildVariables']) ? $args['buildVariables'] : null;
-        $bulkId = !empty($args['bulkId']) ? $args['bulkId'] : null;
-        $this->utilityBelt->deployEnvironment($this->args->project, $this->args->environment, $variables, $bulkId, $passIfTextExistsInLogs);
+        $bulkName = !empty($args['bulkName']) ? $args['bulkName'] : null;
+        $this->utilityBelt->deployEnvironment($this->args->project, $this->args->environment, $variables, $bulkName, $passIfTextExistsInLogs);
     }
 
 }

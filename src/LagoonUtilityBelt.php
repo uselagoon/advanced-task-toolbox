@@ -50,11 +50,11 @@ class LagoonUtilityBelt extends UtilityBelt
     }
 
     // Here follows arbitrary deployment functions
-    public function deployEnvironment($project, $environment, $variables, $bulkId = null, $passFailedDeploymentIfTextExists = null)
+    public function deployEnvironment($project, $environment, $variables, $bulkName = null, $passFailedDeploymentIfTextExists = null)
     {
         $this->log(sprintf("About to deploy %s:%s", $project, $environment));
       $query = '
-mutation deployit($environmentName: String!, $projectName: String!, $bulkId: String, $buildVariables: [EnvKeyValueInput]) {
+mutation deployit($environmentName: String!, $projectName: String!, $bulkName: String, $bulkId: String, $buildVariables: [EnvKeyValueInput]) {
 deployEnvironmentLatest(input: {
     environment: {
       name: $environmentName
@@ -63,6 +63,7 @@ deployEnvironmentLatest(input: {
       }
     },returnData: true,
     buildVariables: $buildVariables,
+    bulkName: $bulkName,
     bulkId: $bulkId
   })
 }';
@@ -74,8 +75,9 @@ deployEnvironmentLatest(input: {
         if(!empty($variables) && count($variables) > 0) {
           $args['buildVariables'] = $variables;
         }
-        if(!empty($bulkId)) {
-          $args['bulkId'] = $bulkId;
+        if(!empty($bulkName)) {
+          $args['bulkName'] = $bulkName;
+          $args['bulkId'] = uniqid('bulk-');
         }
         $projectAdTasks = $client->json($query, $args);
 
