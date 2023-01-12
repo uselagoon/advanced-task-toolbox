@@ -50,11 +50,11 @@ class LagoonUtilityBelt extends UtilityBelt
     }
 
     // Here follows arbitrary deployment functions
-    public function deployEnvironment($project, $environment, $variables, $passFailedDeploymentIfTextExists = null)
+    public function deployEnvironment($project, $environment, $variables, $bulkId = null, $passFailedDeploymentIfTextExists = null)
     {
         $this->log(sprintf("About to deploy %s:%s", $project, $environment));
       $query = '
-mutation deployit($environmentName: String!, $projectName: String!, $buildVariables: [EnvKeyValueInput]) {
+mutation deployit($environmentName: String!, $projectName: String!, $bulkId: String, $buildVariables: [EnvKeyValueInput]) {
 deployEnvironmentLatest(input: {
     environment: {
       name: $environmentName
@@ -62,7 +62,8 @@ deployEnvironmentLatest(input: {
         name: $projectName
       }
     },returnData: true,
-    buildVariables: $buildVariables
+    buildVariables: $buildVariables,
+    bulkId: $bulkId
   })
 }';
       $client = $this->getLagoonPHPClient();
@@ -72,6 +73,9 @@ deployEnvironmentLatest(input: {
         $args = ["projectName" => $project, "environmentName" => $environment];
         if(!empty($variables) && count($variables) > 0) {
           $args['buildVariables'] = $variables;
+        }
+        if(!empty($bulkId)) {
+          $args['bulkId'] = $bulkId;
         }
         $projectAdTasks = $client->json($query, $args);
 
