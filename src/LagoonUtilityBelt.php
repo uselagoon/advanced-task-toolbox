@@ -50,13 +50,39 @@ class LagoonUtilityBelt extends UtilityBelt
     }
 
     // Here follows arbitrary deployment functions
-    public function deployEnvironment($project, $environment, $passFailedDeploymentIfTextExists = null)
+    public function deployEnvironment($project, $environment, $variables, $passFailedDeploymentIfTextExists = null)
     {
         $this->log(sprintf("About to deploy %s:%s", $project, $environment));
-        $resp = $this->runLagoonCommand(
-          "deploy latest -p {$project} -e {$environment} --returnData --force"
-        );
-        $id = trim($resp);
+      $query = '
+mutation deployit($environmentName: String!, $projectName: String!, $buildVariables: [EnvKeyValueInput]) {
+deployEnvironmentLatest(input: {
+    environment: {
+      name: $environmentName
+      project: {
+        name: $projectName
+      }
+    },returnData: true,
+    buildVariables: $buildVariables
+  })
+}';
+      $client = $this->getLagoonPHPClient();
+
+
+      try {
+        $args = ["projectName" => $project, "environmentName" => $environment];
+        if(!empty($variables) && count($variables) > 0) {
+          $args['buildVariables'] = $variables;
+        }
+        $projectAdTasks = $client->json($query, $args);
+
+        $id = $projectAdTasks->data->deployEnvironmentLatest;
+
+        //TODO: check if $id is a fail
+      } catch (\Exception $ex) {
+        //TODO: do we want to implement any non-terrible error handling?
+        throw $ex;
+      }
+
         $completionState = $this->waitForDeploymentToComplete(
           $project,
           $environment,
