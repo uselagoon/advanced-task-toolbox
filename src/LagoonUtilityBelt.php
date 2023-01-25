@@ -77,9 +77,11 @@ deployEnvironmentLatest(input: {
         }
         if(!empty($bulkName)) {
           $args['bulkName'] = $bulkName;
-          $args['bulkId'] = uniqid('bulk-');
+          $args['bulkId'] = $bulkName;
         }
         $projectAdTasks = $client->json($query, $args);
+
+        var_dump($projectAdTasks);
 
         $id = $projectAdTasks->data->deployEnvironmentLatest;
 
