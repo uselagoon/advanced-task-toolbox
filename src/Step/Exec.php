@@ -48,6 +48,11 @@ class Exec extends StepParent {
           '%namespace%' => $this->args->namespace,
         ];
 
+        //Here we reach into the dynamic environment to grab any other arbitrarily defined vars
+        foreach (self::getAllVariables() as $key => $value) {
+            $substitutions["%{$key}%"] =  $value;
+        }
+
         foreach ($substitutions as $key => $value) {
             $string = str_replace($key, $value, $string);
         }
