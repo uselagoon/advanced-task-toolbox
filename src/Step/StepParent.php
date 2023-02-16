@@ -17,6 +17,23 @@ abstract class StepParent implements StepInterface
     protected $args;
     protected $commandName;
 
+    static $dynamicEnvironment = [];
+
+    public static function setVariable($name, $value) {
+            self::$dynamicEnvironment[$name] = $value;
+    }
+
+    public static function getVariable($name) {
+        if(!key_exists($name, self::$dynamicEnvironment)) {
+            throw new \Exception("Unable to find variable {$name} in dynamic environment - have you previously set it?");
+        }
+        return self::$dynamicEnvironment[$name];
+    }
+
+    public static function getAllVariables() {
+        return self::$dynamicEnvironment;
+    }
+
     public function __construct(RunnerArgs $args)
     {
         $this->cluster = $args->cluster;
