@@ -15,11 +15,11 @@ class RoboFile extends \Robo\Tasks
     public function run(
       $opts = [
         'migrateYaml' => './scripts/default.yaml',
-        'token' => null,
+        'token' => null, //This is the token used to chat to the k8s api
         'kubeContext' => null,
-        'namespace' => null,
-        'project' => null,
-        'environment' => null,
+        'namespace' => null, // The namespace we're targeting in cluster
+        'project' => null, //project name, used for lagoon api calls
+        'environment' => null, //environment name, used for lagoon api calls
         'sshKey' => null,
       ]
     ) {
