@@ -67,10 +67,10 @@ class UtilityBelt
             ];
         });
 
-        /** @var \RenokiCo\PhpK8s\Kinds\K8sPod $pod */
-        foreach ($deployment->getPods() as $pod) {
-            $metadata = $pod->getAttribute("metadata");
-            if (empty($metadata['deletionTimestamp'])) {
+      /** @var \RenokiCo\PhpK8s\Kinds\K8sPod $pod */
+      foreach ($deployment->getPods() as $pod) {
+          $metadata = $pod->getAttribute("metadata");
+            if (empty($metadata['deletionTimestamp']) && $pod->isRunning()) {
                 return $pod;
             }
         }
