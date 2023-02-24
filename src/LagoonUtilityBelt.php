@@ -10,7 +10,7 @@ class LagoonUtilityBelt extends UtilityBelt {
 
   static $DEPLOY_WAIT_TIMEOUT = 60;
 
-  static $DEPLOY_WAIT_ATTEMPTS = 60; //60 iterations of $DEPLOY_WAIT_TIMEOUT - i.e. an hour.
+  static $DEPLOY_WAIT_ATTEMPTS = 120; //iterations of $DEPLOY_WAIT_TIMEOUT - i.e. two hours.
 
   protected $lagoonSshKeyPath;
 
