@@ -117,7 +117,6 @@ deployEnvironmentLatest(input: {
     switch ($completionState) {
       case ("complete"):
         return TRUE;
-        break;
       case ("failed"):
         $this->log("Got completionstate: " . $completionState);
 
@@ -152,10 +151,8 @@ deployEnvironmentLatest(input: {
         else {
           throw new \Exception("Deployment failed - exiting");
         }
-        break;
       case ("cancelled"):
         throw new \Exception("Deployment was cancelled by user");
-        break;
     }
   }
 
