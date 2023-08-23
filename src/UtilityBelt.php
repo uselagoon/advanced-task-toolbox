@@ -16,9 +16,6 @@ class UtilityBelt
 
     protected $namespace;
 
-    /** @var LoggerTrait */
-    private $loggerTrait;
-
     public function __construct($k8sClient, $namespace)
     {
         $this->client = $k8sClient;
@@ -77,18 +74,6 @@ class UtilityBelt
         throw new \Exception("Could not find a suitable pod");
     }
 
-
-    public function getLagoonEnv()
-    {
-        $configMap = $this->client->configmap()
-          ->whereNamespace($this->namespace)
-          ->whereName("lagoon-env")
-          ->get()
-          ->getData();
-        return $configMap;
-    }
-
-
     public function execInPod($deploymentName, $command)
     {
         $pod = $this->getPodFromDeployment($deploymentName);
@@ -135,9 +120,9 @@ class UtilityBelt
      * @param $command kubectl command to be run - without ns or kubectl
      * @param $token
      *
-     * @return void
+     * @return string
      */
-    public function runKubectl($command, $token=null) {
+    public function runKubectl($command, $token=null): string {
 
         $command = "kubectl -n {$this->namespace} " . $command;
 
