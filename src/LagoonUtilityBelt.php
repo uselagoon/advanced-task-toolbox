@@ -6,7 +6,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Lagoon\LagoonClient;
 
-class LagoonUtilityBelt extends UtilityBelt {
+class LagoonUtilityBelt extends UtilityBelt implements LagoonUtilityBeltInterface {
 
   static $DEPLOY_WAIT_TIMEOUT = 60;
 

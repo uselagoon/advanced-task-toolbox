@@ -3,6 +3,7 @@
 namespace Migrator\Step;
 
 use Migrator\LagoonUtilityBelt;
+use Migrator\LagoonUtilityBeltInterface;
 use Migrator\LoggerTrait;
 use Migrator\RunnerArgs;
 use Migrator\UtilityBelt;
@@ -34,13 +35,13 @@ abstract class StepParent implements StepInterface
         return self::$dynamicEnvironment;
     }
 
-    public function __construct(RunnerArgs $args)
+    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args)
     {
         $this->cluster = $args->cluster;
         $this->namespace = $args->namespace;
         $this->token = $args->token;
         $this->args = $args;
-        $this->utilityBelt = new LagoonUtilityBelt($this->cluster, $this->namespace, $args->sshKey);
+        $this->utilityBelt = $utilityBelt;
     }
 
     /**
@@ -61,6 +62,34 @@ abstract class StepParent implements StepInterface
         $this->printOpenLogSection($this->commandName);
         $this->runImplementation($args);
     }
+
+  /**
+   * This will take a string and do any textual substitutions from the current
+   * dynamic environment
+   *
+   * @param $string
+   *
+   * @return array|string|string[]
+   */
+  public function doTextSubstitutions($string)
+  {
+    $substitutions = [
+      '%project%' => $this->args->project,
+      '%environment%' => $this->args->environment,
+      '%namespace%' => $this->args->namespace,
+    ];
+
+    //Here we reach into the dynamic environment to grab any other arbitrarily defined vars
+    foreach (self::getAllVariables() as $key => $value) {
+      $substitutions["%{$key}%"] =  $value;
+    }
+
+
+    foreach ($substitutions as $key => $value) {
+      $string = str_replace($key, $value, $string);
+    }
+    return $string;
+  }
 
     // We use dynamic dispatch to allow us to do some logging and
     // cleanup from the parent, and then have the child provide a (protected)
