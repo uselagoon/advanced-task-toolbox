@@ -16,7 +16,7 @@ class Deploy extends StepParent
         ) ? $args["passIfTextExistsInLogs"] : null;
 
         // We'd like to run the buildvar values through the text substitutions
-        $processedBuildVars = array_map(fn($v) => $this->doTextSubstitutions($v), $args['buildVariables']);
+        $processedBuildVars = array_map(fn($v) => $this->doTextSubstitutions($v), $args['buildVariables'] ?: []);
         $variables = !empty($processedBuildVars) ? $processedBuildVars : null;
         $bulkName = !empty($args['bulkName']) ? $args['bulkName'] : null;
         $skipDeploymentWait = !empty($args['skipDeploymentWait']) ? $args['skipDeploymentWait'] : false;

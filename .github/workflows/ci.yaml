@@ -13,3 +13,8 @@ jobs:
         uses: php-actions/phpstan@v3
         with:
           configuration: ./phpstan.neon
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@master
+        with:
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
