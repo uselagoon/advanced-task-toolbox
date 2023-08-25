@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "545f4fd7a04ce9b8b9a7f3de31d1acb9",
+    "content-hash": "cab189a526671f806849c8ac31e96093",
     "packages": [
         {
             "name": "composer/semver",
@@ -4132,6 +4132,77 @@
             "time": "2023-07-31T07:08:24+00:00"
         },
         {
+            "name": "twig/twig",
+            "version": "v3.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "5cf942bbab3df42afa918caeba947f1b690af64b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/5cf942bbab3df42afa918caeba947f1b690af64b",
+                "reference": "5cf942bbab3df42afa918caeba947f1b690af64b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/polyfill-ctype": "^1.8",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "require-dev": {
+                "psr/container": "^1.0|^2.0",
+                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Twig Team",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "support": {
+                "issues": "https://github.com/twigphp/Twig/issues",
+                "source": "https://github.com/twigphp/Twig/tree/v3.7.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-07-26T07:16:09+00:00"
+        },
+        {
             "name": "uselagoon/lagoon-php-sdk",
             "version": "v1.6.2",
             "source": {
@@ -4314,6 +4385,59 @@
                 }
             ],
             "time": "2022-03-08T17:03:00+00:00"
+        },
+        {
+            "name": "wyrihaximus/simple-twig",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WyriHaximus/php-simple-twig.git",
+                "reference": "aa0d055c13a25b0318aa55edaea13fe12af15939"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WyriHaximus/php-simple-twig/zipball/aa0d055c13a25b0318aa55edaea13fe12af15939",
+                "reference": "aa0d055c13a25b0318aa55edaea13fe12af15939",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8 || ^7.4",
+                "twig/twig": "^3.3.2"
+            },
+            "require-dev": {
+                "wyrihaximus/test-utilities": "^3.7.3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
+                "psr-4": {
+                    "WyriHaximus\\Twig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cees-Jan Kiewiet",
+                    "email": "ceesjank@gmail.com"
+                }
+            ],
+            "description": "🌱 Wrapper around Twig making rendering a string template trivial",
+            "support": {
+                "issues": "https://github.com/WyriHaximus/php-simple-twig/issues",
+                "source": "https://github.com/WyriHaximus/php-simple-twig/tree/2.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/WyriHaximus",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-09-08T22:05:38+00:00"
         }
     ],
     "packages-dev": [

@@ -48,7 +48,7 @@ class DeployTest extends TestCase {
 
     // Here we replace LAGOON_BACKUPS_DISABLED with whatever is
     // placed into the dynamic environment
-    $buildVars = ['LAGOON_BACKUPS_DISABLED', '%LAGOON_BACKUPS_DISABLED%'];
+    $buildVars = ['LAGOON_BACKUPS_DISABLED', '{{ LAGOON_BACKUPS_DISABLED }}'];
 
     $args = [
       'project' => 'testproject',

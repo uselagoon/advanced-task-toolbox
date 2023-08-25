@@ -7,6 +7,7 @@ use Migrator\LagoonUtilityBeltInterface;
 use Migrator\LoggerTrait;
 use Migrator\RunnerArgs;
 use Migrator\UtilityBelt;
+use function WyriHaximus\Twig\render;
 
 abstract class StepParent implements StepInterface
 {
@@ -20,6 +21,13 @@ abstract class StepParent implements StepInterface
 
     static $dynamicEnvironment = [];
 
+
+    public static function fillDynamicEnvironmentFromEnv() {
+      $envVars = getenv();
+      foreach ($envVars as $key => $val) {
+        self::setVariable(sprintf("%s", $key), $val);
+      }
+    }
     public static function setVariable($name, $value) {
             self::$dynamicEnvironment[$name] = $value;
     }
@@ -74,21 +82,18 @@ abstract class StepParent implements StepInterface
   public function doTextSubstitutions($string)
   {
     $substitutions = [
-      '%project%' => $this->args->project,
-      '%environment%' => $this->args->environment,
-      '%namespace%' => $this->args->namespace,
+      'project' => $this->args->project,
+      'environment' => $this->args->environment,
+      'namespace' => $this->args->namespace,
     ];
 
     //Here we reach into the dynamic environment to grab any other arbitrarily defined vars
     foreach (self::getAllVariables() as $key => $value) {
-      $substitutions["%{$key}%"] =  $value;
+      $substitutions[$key] =  $value;
     }
 
 
-    foreach ($substitutions as $key => $value) {
-      $string = str_replace($key, $value, $string);
-    }
-    return $string;
+    return render($string, $substitutions);
   }
 
     // We use dynamic dispatch to allow us to do some logging and

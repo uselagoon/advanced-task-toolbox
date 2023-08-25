@@ -116,6 +116,16 @@ All steps can take the following optional fields to set retry parameters
 
 Currently, the toolbox supports the following functions.
 
+#### Text Substitutions with environment variables
+
+Some of the steps below support the notion of text substitution - that is, you're able to use string templates of the 
+form `{{ substitutionname }}` and before the step is run, it will replace the substitution with the appropriate text.
+
+This system also allows for substitutions from environment variables. For instance, if you have an environment variable of the name
+`SYSTEM_NAME`, you can use that in the step substitutions by referencing it as `{{ SYSTEM_NAME }}`
+
+We use [twig](https://twig.symfony.com/) for formatting, which makes it simple to add default values, for instance, if `SYSTEM_NAME` is only available conditionally, we can do something like `{{ SYSTEM_NAME ?? 'default val' }}`
+
 ### Exec
 
 The exec step allows you to run a command from inside the current advanced task's container, or within another pod.
@@ -147,9 +157,9 @@ The `exec` step allows you to do textual substitutions in the `command`.
 
 It will do the following substitutions
 
-* '%project%' for current project name
-* '%environment%' for the current environment
-* '%namespace%' for the current namespace
+* '{{ project }}' for current project name
+* '{{ environment }}' for the current environment
+* '{{ namespace }}' for the current namespace
 
 ### scale
 
