@@ -2,12 +2,13 @@
 
 namespace Migrator\Step;
 
+use Migrator\LagoonUtilityBeltInterface;
 use Migrator\RunnerArgs;
 
 interface StepInterface
 {
 
-    public function __construct(RunnerArgs $args);
+    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args);
 
     public function run(array $args);
 

@@ -3,3 +3,6 @@
 lagoon-sync
 /scripts/*
 !/scripts/default.yaml
+./scratchpad
+.phpunit.result.cache
+.phpunit.cache
