@@ -115,7 +115,7 @@ class Runner
         // To make the steps more testable, we now inject the utility belt
         $lub = new LagoonUtilityBelt($this->args->cluster, $this->args->namespace, $this->args->sshKey);
 
-        $stepObj = new $classname($this->args);
+        $stepObj = new $classname($lub, $this->args);
 
         $retryTimes = !empty($step['retry']) ? $step['retry'] : 0;
         $retrySleep = !empty($step['retryDelaySeconds']) ? $step['retryDelaySeconds'] : 10;
