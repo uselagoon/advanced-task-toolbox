@@ -2,6 +2,7 @@
 
 namespace Migrator\Step;
 
+use _PHPStan_7dd5f1b1b\Nette\Neon\Exception;
 use Migrator\LagoonUtilityBelt;
 use Migrator\LagoonUtilityBeltInterface;
 use Migrator\LoggerTrait;
@@ -25,9 +26,33 @@ abstract class StepParent implements StepInterface
     public static function fillDynamicEnvironmentFromEnv() {
       $envVars = getenv();
       foreach ($envVars as $key => $val) {
-        self::setVariable(sprintf("%s", $key), $val);
+        if($key == "JSON_PAYLOAD") {
+          self::fillDynamicEnvironmentFromJSONPayload($val);
+        } else {
+          self::setVariable(sprintf("%s", $key), $val);
+        }
+
       }
     }
+
+    public static function fillDynamicEnvironmentFromJSONPayload($payload) {
+
+      $decodedJson = base64_decode($payload);
+      if(!$decodedJson) {
+        throw new \Exception("Found JSON_PAYLOAD but could not decode it");
+      }
+
+      $vars = json_decode($decodedJson, true);
+
+      if(json_last_error() > 0) {
+        throw new \Exception(sprintf("Could not decode JSONPAYLOAD: %s ", json_last_error_msg()));
+      }
+
+      foreach ($vars as $key => $val) {
+        self::setVariable($key, $val);
+      }
+    }
+
     public static function setVariable($name, $value) {
             self::$dynamicEnvironment[$name] = $value;
     }

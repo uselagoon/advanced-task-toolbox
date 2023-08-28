@@ -50,5 +50,23 @@ class StepParentTest extends TestCase {
 
   }
 
+  /**
+   * Advanced tasks inject a "JSON_PAYLOAD" environment variable that contains
+   * a base64 encoded array of arguments - here we test that this will be unwound
+   * and loaded into the dynamic environment
+   *
+   * @return void
+   * @throws \Exception
+   */
+  public function testJSONPAYLOADFILL() {
+
+    // this looks like {"fullrun":"yes"}
+    putenv("JSON_PAYLOAD=eyJmdWxscnVuIjoieWVzIn0=");
+
+    StepParent::fillDynamicEnvironmentFromEnv();
+
+    $this->assertEquals(StepParent::getVariable("fullrun"), "yes");
+
+  }
 
 }
