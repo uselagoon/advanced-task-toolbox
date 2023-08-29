@@ -1,26 +1,26 @@
 <?php
 
-namespace Migrator\Step;
+namespace Migrator;
 
 use function WyriHaximus\Twig\render;
 
-trait DynamicEnvironmentTrait {
+class DynamicEnvironment {
 
-    static $dynamicEnvironment = [];
+    protected $dynamicEnvironment = [];
 
-    public static function fillDynamicEnvironmentFromEnv() {
+    public function fillDynamicEnvironmentFromEnv() {
         $envVars = getenv();
         foreach ($envVars as $key => $val) {
             if($key == "JSON_PAYLOAD") {
-                self::fillDynamicEnvironmentFromJSONPayload($val);
+                $this->fillDynamicEnvironmentFromJSONPayload($val);
             } else {
-                self::setVariable(sprintf("%s", $key), $val);
+                $this->setVariable(sprintf("%s", $key), $val);
             }
 
         }
     }
 
-    public static function fillDynamicEnvironmentFromJSONPayload($payload) {
+    public function fillDynamicEnvironmentFromJSONPayload($payload) {
 
         $decodedJson = base64_decode($payload);
         if(!$decodedJson) {
@@ -34,26 +34,26 @@ trait DynamicEnvironmentTrait {
         }
 
         foreach ($vars as $key => $val) {
-            self::setVariable($key, $val);
+            $this->setVariable($key, $val);
         }
     }
 
-    public static function setVariable($name, $value) {
-        self::$dynamicEnvironment[$name] = $value;
+    public function setVariable($name, $value) {
+        $this->dynamicEnvironment[$name] = $value;
     }
 
-    public static function getVariable($name) {
-        if(!key_exists($name, self::$dynamicEnvironment)) {
+    public function getVariable($name) {
+        if(!key_exists($name, $this->dynamicEnvironment)) {
             throw new \Exception("Unable to find variable {$name} in dynamic environment - have you previously set it?");
         }
-        return self::$dynamicEnvironment[$name];
+        return $this->dynamicEnvironment[$name];
     }
 
-    public static function getAllVariables() {
-        return self::$dynamicEnvironment;
+    public function getAllVariables() {
+        return $this->dynamicEnvironment;
     }
 
-    public static function renderText($template, $extraVars = [])
+    public function renderText($template, $extraVars = [])
     {
         $subs = array_merge(self::getAllVariables(), $extraVars);
         return render($template, $subs);

@@ -1,6 +1,6 @@
 <?php
 
-use Migrator\Runner;
+use Migrator\DynamicEnvironment;
 use PHPUnit\Framework\TestCase;
 
 class RunnerTest extends TestCase
@@ -32,7 +32,12 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+
+        // set up env
+        $env = new DynamicEnvironment();
+        $env->fillDynamicEnvironmentFromEnv();
+
+        $runner = new \Migrator\Runner($env, $args);
         $runner->run();
         $this->assertTrue($testRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -61,7 +66,11 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        // set up env
+        $env = new DynamicEnvironment();
+        $env->fillDynamicEnvironmentFromEnv();
+
+        $runner = new \Migrator\Runner($env, $args);
         $runner->run();
         $this->assertTrue($conditionalStepRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -90,7 +99,11 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        // set up env
+        $env = new DynamicEnvironment();
+        $env->fillDynamicEnvironmentFromEnv();
+
+        $runner = new \Migrator\Runner($env, $args);
         $runner->run();
         $this->assertFalse($conditionalStepRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -105,9 +118,13 @@ class RunnerTest extends TestCase
     function testConditionalWithTwigConditions()
     {
         //just testing the test case callback
+        // set up env
+        $env = new DynamicEnvironment();
+        $env->fillDynamicEnvironmentFromEnv();
+
         $conditionalStepShouldHaveRun = false;
-        \Migrator\Step\DynamicEnvironmentTrait::setVariable('RUN_THIS', "true");
-        \Migrator\Step\DynamicEnvironmentTrait::setVariable('DONT_RUN_THAT', "true");
+        $env->setVariable('RUN_THIS', "true");
+        $env->setVariable('DONT_RUN_THAT', "true");
         $conditionalStepShouldNotHaveRun = true;
         $cb = function ($args) use (&$conditionalStepShouldHaveRun, &$conditionalStepShouldNotHaveRun) {
             if(!empty($args['testid']) && $args['testid'] == 1)
@@ -126,7 +143,7 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        $runner = new \Migrator\Runner($env, $args);
         $runner->run();
         $this->assertTrue($conditionalStepShouldHaveRun);
         $this->assertTrue($conditionalStepShouldNotHaveRun);

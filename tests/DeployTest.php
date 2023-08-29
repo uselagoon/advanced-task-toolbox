@@ -2,6 +2,7 @@
 
 namespace Migrator\Step;
 
+use Migrator\DynamicEnvironment;
 use Migrator\LagoonUtilityBelt;
 use Migrator\RunnerArgs;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +13,11 @@ class DeployTest extends TestCase {
     $lub = $this->createStub(LagoonUtilityBelt::class);
     $lub->method("deployEnvironment")->willReturn("testBuildId");
     $runnerArgs = new RunnerArgs();
-    $deploy = new Deploy($lub, $runnerArgs);
+
+    $env = new DynamicEnvironment();
+    $env->fillDynamicEnvironmentFromEnv();
+
+    $deploy = new Deploy($env, $lub, $runnerArgs);
     $this->expectNotToPerformAssertions();
     $deploy->run([]);
   }
@@ -37,7 +42,10 @@ class DeployTest extends TestCase {
     $runnerArgs->project = $args['project'];
     $runnerArgs->environment = $args['environment'];
 
-    $deploy = new Deploy($lub, $runnerArgs);
+    $env = new DynamicEnvironment();
+    $env->fillDynamicEnvironmentFromEnv();
+
+    $deploy = new Deploy($env, $lub, $runnerArgs);
 
     $deploy->run($args);
 
@@ -68,10 +76,13 @@ class DeployTest extends TestCase {
     $runnerArgs->project = $args['project'];
     $runnerArgs->environment = $args['environment'];
 
-    $deploy = new Deploy($lub, $runnerArgs);
+    $env = new DynamicEnvironment();
+    $env->fillDynamicEnvironmentFromEnv();
+
+    $deploy = new Deploy($env, $lub, $runnerArgs);
 
     // Let's set up the basic text subs we want to do
-    Deploy::setVariable('LAGOON_BACKUPS_DISABLED', "false");
+    $env->setVariable('LAGOON_BACKUPS_DISABLED', "false");
 
     $deploy->run($args);
 
