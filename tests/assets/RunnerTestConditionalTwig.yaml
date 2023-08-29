@@ -1,0 +1,17 @@
+steps:
+  - name: basic run test
+    type: test
+  - name: conditional will run if RUN_THIS is set to true
+    type: conditional
+    condition: '{{ RUN_THIS == "true" ? true : false }}'
+    steps:
+      - name: conditional first level
+        type: test
+        testid: 1
+  - name: conditional will run if DONT_RUN_THAT is set to false
+    type: conditional
+    condition: '{{ DONT_RUN_THAT == "false" ? true : false }}'
+    steps:
+      - name: conditional first level
+        type: test
+        testid: 2

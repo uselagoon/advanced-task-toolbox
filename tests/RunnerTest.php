@@ -105,23 +105,32 @@ class RunnerTest extends TestCase
     function testConditionalWithTwigConditions()
     {
         //just testing the test case callback
-        $conditionalStepRan = false;
-        $cb = function ($args) use (&$conditionalStepRan) {
+        $conditionalStepShouldHaveRun = false;
+        \Migrator\Step\DynamicEnvironmentTrait::setVariable('RUN_THIS', "true");
+        \Migrator\Step\DynamicEnvironmentTrait::setVariable('DONT_RUN_THAT', "true");
+        $conditionalStepShouldNotHaveRun = true;
+        $cb = function ($args) use (&$conditionalStepShouldHaveRun, &$conditionalStepShouldNotHaveRun) {
             if(!empty($args['testid']) && $args['testid'] == 1)
             {
-                $conditionalStepRan = true;
+                $conditionalStepShouldHaveRun = true;
+            }
+            if(!empty($args['testid']) && $args['testid'] == 2)
+            {
+                $conditionalStepShouldNotHaveRun = false;
             }
         };
         \Migrator\Step\Test::setCallback($cb);
 
         $steps = $this->getStepsFromFile(
-          __DIR__ . "/assets/RunnerTestConditionalDidntRun.yaml"
+          __DIR__ . "/assets/RunnerTestConditionalTwig.yaml"
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
         $runner = new \Migrator\Runner($args);
         $runner->run();
-        $this->assertFalse($conditionalStepRan);
+        $this->assertTrue($conditionalStepShouldHaveRun);
+        $this->assertTrue($conditionalStepShouldNotHaveRun);
+
         \Migrator\Step\Test::clearCallbacks();
     }
 

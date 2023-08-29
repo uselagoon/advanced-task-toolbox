@@ -2,6 +2,7 @@
 
 namespace Migrator;
 
+use Migrator\Step\DynamicEnvironmentTrait;
 use Migrator\Step\StepParent;
 
 class Runner
@@ -49,7 +50,10 @@ class Runner
               if(!isset($step['condition'])) {
                   throw new \Exception(sprintf("Failed on step '%s' - no condition attached", $step['name']));
               }
-              if($step['condition'] === true) {
+
+              $condition = DynamicEnvironmentTrait::renderText($step['condition']);
+
+              if($condition == true) {
                   $args = $this->args;
                   $args->steps = $step['steps'];
                   $runner = new Runner($args);
