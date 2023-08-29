@@ -2,6 +2,8 @@
 
 namespace Migrator\Step;
 
+use function WyriHaximus\Twig\render;
+
 trait DynamicEnvironmentTrait {
 
     static $dynamicEnvironment = [];
@@ -49,6 +51,12 @@ trait DynamicEnvironmentTrait {
 
     public static function getAllVariables() {
         return self::$dynamicEnvironment;
+    }
+
+    public static function renderText($template, $extraVars = [])
+    {
+        $subs = array_merge(self::getAllVariables(), $extraVars);
+        return render($template, $subs);
     }
 
 }

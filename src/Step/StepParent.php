@@ -58,19 +58,13 @@ abstract class StepParent implements StepInterface
    */
   public function doTextSubstitutions($string)
   {
-    $substitutions = [
+    $extraSubs = [
       'project' => $this->args->project,
       'environment' => $this->args->environment,
       'namespace' => $this->args->namespace,
     ];
 
-    //Here we reach into the dynamic environment to grab any other arbitrarily defined vars
-    foreach (self::getAllVariables() as $key => $value) {
-      $substitutions[$key] =  $value;
-    }
-
-
-    return render($string, $substitutions);
+      return self::renderText($string, $extraSubs);
   }
 
     // We use dynamic dispatch to allow us to do some logging and
