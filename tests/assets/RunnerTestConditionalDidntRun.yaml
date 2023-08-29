@@ -1,0 +1,10 @@
+steps:
+  - name: basic run test
+    type: test
+  - name: conditional will always run
+    type: conditional
+    condition: false
+    steps:
+      - name: conditional first level
+        type: test
+        testid: 1
