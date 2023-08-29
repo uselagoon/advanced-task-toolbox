@@ -12,61 +12,13 @@ use function WyriHaximus\Twig\render;
 
 abstract class StepParent implements StepInterface
 {
-    use LoggerTrait;
+    use LoggerTrait, DynamicEnvironmentTrait;
     protected $cluster;
     protected $namespace;
     protected $utilityBelt;
     protected $token;
     protected $args;
     protected $commandName;
-
-    static $dynamicEnvironment = [];
-
-
-    public static function fillDynamicEnvironmentFromEnv() {
-      $envVars = getenv();
-      foreach ($envVars as $key => $val) {
-        if($key == "JSON_PAYLOAD") {
-          self::fillDynamicEnvironmentFromJSONPayload($val);
-        } else {
-          self::setVariable(sprintf("%s", $key), $val);
-        }
-
-      }
-    }
-
-    public static function fillDynamicEnvironmentFromJSONPayload($payload) {
-
-      $decodedJson = base64_decode($payload);
-      if(!$decodedJson) {
-        throw new \Exception("Found JSON_PAYLOAD but could not decode it");
-      }
-
-      $vars = json_decode($decodedJson, true);
-
-      if(json_last_error() > 0) {
-        throw new \Exception(sprintf("Could not decode JSONPAYLOAD: %s ", json_last_error_msg()));
-      }
-
-      foreach ($vars as $key => $val) {
-        self::setVariable($key, $val);
-      }
-    }
-
-    public static function setVariable($name, $value) {
-            self::$dynamicEnvironment[$name] = $value;
-    }
-
-    public static function getVariable($name) {
-        if(!key_exists($name, self::$dynamicEnvironment)) {
-            throw new \Exception("Unable to find variable {$name} in dynamic environment - have you previously set it?");
-        }
-        return self::$dynamicEnvironment[$name];
-    }
-
-    public static function getAllVariables() {
-        return self::$dynamicEnvironment;
-    }
 
     public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args)
     {
@@ -106,19 +58,13 @@ abstract class StepParent implements StepInterface
    */
   public function doTextSubstitutions($string)
   {
-    $substitutions = [
+    $extraSubs = [
       'project' => $this->args->project,
       'environment' => $this->args->environment,
       'namespace' => $this->args->namespace,
     ];
 
-    //Here we reach into the dynamic environment to grab any other arbitrarily defined vars
-    foreach (self::getAllVariables() as $key => $value) {
-      $substitutions[$key] =  $value;
-    }
-
-
-    return render($string, $substitutions);
+      return self::renderText($string, $extraSubs);
   }
 
     // We use dynamic dispatch to allow us to do some logging and

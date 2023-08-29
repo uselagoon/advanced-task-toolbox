@@ -2,6 +2,9 @@
 
 namespace Migrator;
 
+use Migrator\Step\DynamicEnvironmentTrait;
+use Migrator\Step\StepParent;
+
 class Runner
 {
     use LoggerTrait;
@@ -40,8 +43,23 @@ class Runner
     public function run()
     {
         foreach ($this->steps as $step) {
-            //determine if this is a step or an assertion
-            if (!empty($step['assertTrue']) || !empty($step['assertFalse'])) {
+
+          //determine if this is a step or an assertion or conditional
+            if($step['type'] == "conditional") {
+              // we determine if the condition is "true" - if so, we run the steps recursively
+              if(!isset($step['condition'])) {
+                  throw new \Exception(sprintf("Failed on step '%s' - no condition attached", $step['name']));
+              }
+
+              $condition = DynamicEnvironmentTrait::renderText($step['condition']);
+
+              if($condition == true) {
+                  $args = $this->args;
+                  $args->steps = $step['steps'];
+                  $runner = new Runner($args);
+                  $runner->run();
+              }
+            } else if (!empty($step['assertTrue']) || !empty($step['assertFalse'])) {
                 $this->runAssertion($step);
             } else {
                 $this->runStep($step);

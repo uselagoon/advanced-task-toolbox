@@ -1,0 +1,3 @@
+steps:
+  - name: basic run test
+    type: test

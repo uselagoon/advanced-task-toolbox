@@ -48,7 +48,7 @@ class DeployTest extends TestCase {
 
     // Here we replace LAGOON_BACKUPS_DISABLED with whatever is
     // placed into the dynamic environment
-    $buildVars = ['LAGOON_BACKUPS_DISABLED', '{{ LAGOON_BACKUPS_DISABLED }}'];
+    $buildVars = [["name" => 'LAGOON_BACKUPS_DISABLED', "value"=>'{{ LAGOON_BACKUPS_DISABLED }}']];
 
     $args = [
       'project' => 'testproject',
@@ -58,7 +58,7 @@ class DeployTest extends TestCase {
     ];
 
     // Once the textual subs for $buildVars is done, we expect the following...
-    $buildWithSubs = ['LAGOON_BACKUPS_DISABLED', 'false'];
+    $buildWithSubs = [["name" => 'LAGOON_BACKUPS_DISABLED', "value"=>'false']];
 
     $lub->expects($this->once())
       ->method("deployEnvironment")
