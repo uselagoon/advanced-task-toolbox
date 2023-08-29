@@ -24,6 +24,9 @@ class RoboFile extends \Robo\Tasks
       ]
     ) {
 
+        // Bootstrap the environment
+        \Migrator\Step\StepParent::fillDynamicEnvironmentFromEnv();
+
         \Migrator\LagoonUtilityBelt::setUpLagoon_yml();
         $climate = new CLImate;
         $opts = array_merge($opts, $this->processEnvironment());
