@@ -3,3 +3,15 @@ steps:
     type: exec
     local: true
     command: echo "Running the default - you may want to pass through a migrate file"
+  - name: ls in cli
+    type: exec
+    deployment: cli
+    command: ls
+  - name: condition
+    condition: {{ RUNME == 'true' ? "false" }}
+    type: conditional
+    steps:
+      - name: echo hi
+        type: exec
+        local: true
+        command: echo hi

@@ -1,0 +1,17 @@
+steps:
+  - name: basic run test
+    type: test
+  - name: conditional will always run
+    type: conditional
+    condition: true
+    steps:
+      - name: conditional first level
+        type: test
+        testid: 1
+      - name: nested conditional
+        type: conditional
+        condition: true
+        steps:
+          - name: conditional second level
+            type: test
+            testid: 2

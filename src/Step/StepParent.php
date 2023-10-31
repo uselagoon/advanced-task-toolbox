@@ -17,7 +17,7 @@ abstract class StepParent implements StepInterface
     protected $args;
     protected $commandName;
 
-    protected $environment;
+    public $environment;
 
     public function __construct(DynamicEnvironment $environment, LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args)
     {

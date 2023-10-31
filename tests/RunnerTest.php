@@ -151,4 +151,36 @@ class RunnerTest extends TestCase
         \Migrator\Step\Test::clearCallbacks();
     }
 
+    /**
+     * This drives/tests the conditional system - basic conditional
+     * Further tests will work on textual substitutions etc.
+     *
+     * @return void
+     */
+    function testNestedConditionalRun()
+    {
+        //just testing the test case callback
+        $conditionalStepRan = false;
+        $cb = function ($args) use (&$conditionalStepRan) {
+            if(!empty($args['testid']) && $args['testid'] == 2)
+            {
+                $conditionalStepRan = true;
+            }
+        };
+        \Migrator\Step\Test::setCallback($cb);
+
+        $steps = $this->getStepsFromFile(
+          __DIR__ . "/assets/RunnerTestNestedConditionalRun.yaml"
+        );
+        $args = new \Migrator\RunnerArgs();
+        $args->steps = $steps['steps'];
+        // set up env
+        $env = new DynamicEnvironment();
+        $env->fillDynamicEnvironmentFromEnv();
+
+        $runner = new \Migrator\Runner($env, $args);
+        $runner->run();
+        $this->assertTrue($conditionalStepRan);
+        \Migrator\Step\Test::clearCallbacks();
+    }
 }

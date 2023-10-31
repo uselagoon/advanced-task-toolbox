@@ -36,7 +36,7 @@ class Deploy extends StepParent
             );
         }
         if($registerBuildIdAs !== false) {
-            self::setVariable($registerBuildIdAs, $buildId);
+            $this->environment->setVariable($registerBuildIdAs, $buildId);
         }
     }
 
