@@ -58,9 +58,11 @@ abstract class StepParent implements StepInterface
    */
   public function doTextSubstitutions($string)
   {
+    $environmentClean = str_replace("/","-", $this->args->environment);
     $extraSubs = [
       'project' => $this->args->project,
       'environment' => $this->args->environment,
+      'environmentClean' => $environmentClean,
       'namespace' => $this->args->namespace,
     ];
 

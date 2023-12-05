@@ -133,10 +133,12 @@ class RoboFile extends \Robo\Tasks
             return KubernetesCluster::fromKubeConfigVariable($kubeContext)
               ->withToken($token);
         }
+        $deployTokenFile = file_exists("/var/run/secrets/lagoon/deployer/token") ? "/var/run/secrets/lagoon/deployer/token" : "/var/run/secrets/kubernetes.io/serviceaccount/token";
+
         $cluster = KubernetesCluster::inClusterConfiguration(
           "https://kubernetes.default.svc.cluster.local"
         )
-          ->loadTokenFromFile("/var/run/secrets/lagoon/deployer/token");
+          ->loadTokenFromFile($deployTokenFile);
         return $cluster;
     }
 
@@ -148,11 +150,19 @@ class RoboFile extends \Robo\Tasks
         if (!empty($token)) {
             return $token;
         }
+
         $inClusterTokenFile = "/var/run/secrets/lagoon/deployer/token";
 
         if (file_exists($inClusterTokenFile)) {
             return trim(file_get_contents($inClusterTokenFile));
         }
+
+        $inClusterTokenFile = "/var/run/secrets/kubernetes.io/serviceaccount/token";
+
+        if (file_exists($inClusterTokenFile)) {
+            return trim(file_get_contents($inClusterTokenFile));
+        }
+
     }
 
 
