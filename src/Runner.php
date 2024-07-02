@@ -2,6 +2,7 @@
 
 namespace Migrator;
 
+use Migrator\Step\DynamicEnvironment;
 use Migrator\Step\DynamicEnvironmentTrait;
 use Migrator\Step\StepParent;
 
@@ -19,13 +20,17 @@ class Runner
 
     protected $args;
 
-    public function __construct(RunnerArgs $args
+    /** @var DynamicEnvironment */
+    protected $dynamicEnvironment;
+
+    public function __construct(RunnerArgs $args, DynamicEnvironment $dynamicEnvironment
     ) {
         $this->steps = $args->steps;
         $this->cluster = $args->cluster;
         $this->namespace = $args->namespace;
         $this->token = $args->token;
         $this->args = $args;
+        $this->dynamicEnvironment = $dynamicEnvironment;
     }
 
     public function __get($name)
@@ -51,12 +56,12 @@ class Runner
                   throw new \Exception(sprintf("Failed on step '%s' - no condition attached", $step['name']));
               }
 
-              $condition = DynamicEnvironmentTrait::renderText($step['condition']);
+              $condition = $this->dynamicEnvironment->renderText($step['condition']);
 
               if($condition == true) {
                   $args = $this->args;
                   $args->steps = $step['steps'];
-                  $runner = new Runner($args);
+                  $runner = new Runner($args, $this->dynamicEnvironment);
                   $runner->run();
               }
             } else if (!empty($step['assertTrue']) || !empty($step['assertFalse'])) {
@@ -133,7 +138,7 @@ class Runner
         // To make the steps more testable, we now inject the utility belt
         $lub = new LagoonUtilityBelt($this->args->cluster, $this->args->namespace, $this->args->sshKey);
 
-        $stepObj = new $classname($lub, $this->args);
+        $stepObj = new $classname($lub, $this->args, $this->dynamicEnvironment);
 
         $retryTimes = !empty($step['retry']) ? $step['retry'] : 0;
         $retrySleep = !empty($step['retryDelaySeconds']) ? $step['retryDelaySeconds'] : 10;
