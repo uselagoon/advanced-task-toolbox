@@ -12,7 +12,7 @@ class DeployTest extends TestCase {
     $lub = $this->createStub(LagoonUtilityBelt::class);
     $lub->method("deployEnvironment")->willReturn("testBuildId");
     $runnerArgs = new RunnerArgs();
-    $deploy = new Deploy($lub, $runnerArgs);
+    $deploy = new Deploy($lub, $runnerArgs, new DynamicEnvironment(), new DynamicEnvironment());
     $this->expectNotToPerformAssertions();
     $deploy->run([]);
   }
@@ -37,7 +37,7 @@ class DeployTest extends TestCase {
     $runnerArgs->project = $args['project'];
     $runnerArgs->environment = $args['environment'];
 
-    $deploy = new Deploy($lub, $runnerArgs);
+    $deploy = new Deploy($lub, $runnerArgs, new DynamicEnvironment());
 
     $deploy->run($args);
 
@@ -68,10 +68,12 @@ class DeployTest extends TestCase {
     $runnerArgs->project = $args['project'];
     $runnerArgs->environment = $args['environment'];
 
-    $deploy = new Deploy($lub, $runnerArgs);
+    $dynamicEnv = new DynamicEnvironment();
+
+    $deploy = new Deploy($lub, $runnerArgs, $dynamicEnv);
 
     // Let's set up the basic text subs we want to do
-    Deploy::setVariable('LAGOON_BACKUPS_DISABLED', "false");
+    $dynamicEnv->setVariable('LAGOON_BACKUPS_DISABLED', "false");
 
     $deploy->run($args);
 

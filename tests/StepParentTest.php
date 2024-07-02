@@ -14,9 +14,11 @@ class StepParentTest extends TestCase {
     $envVarVal = uniqid();
     putenv(sprintf("%s=%s", $envVarName, $envVarVal));
 
-    StepParent::fillDynamicEnvironmentFromEnv();
+    $dynamicEnv = new DynamicEnvironment();
 
-    $this->assertEquals(StepParent::getVariable($envVarName), $envVarVal);
+    $dynamicEnv->fillDynamicEnvironmentFromEnv();
+
+    $this->assertEquals($dynamicEnv->getVariable($envVarName), $envVarVal);
 
   }
 
@@ -32,12 +34,13 @@ class StepParentTest extends TestCase {
     $lub = $this->createStub(LagoonUtilityBelt::class);
     $lub->method("deployEnvironment")->willReturn("testBuildId");
     $runnerArgs = new RunnerArgs();
-    $deployStep = new Deploy($lub, $runnerArgs);
+    $dynamicEnv = new DynamicEnvironment();
+    $deployStep = new Deploy($lub, $runnerArgs, $dynamicEnv);
 
     $toSubString = "this should have {{ something }} here";
     $expected = "this should have words here";
 
-    StepParent::setVariable("something", "words");
+    $dynamicEnv->setVariable("something", "words");
 
     $this->assertEquals($expected, $deployStep->doTextSubstitutions($toSubString));
 
@@ -63,9 +66,10 @@ class StepParentTest extends TestCase {
     // this looks like {"fullrun":"yes"}
     putenv("JSON_PAYLOAD=eyJmdWxscnVuIjoieWVzIn0=");
 
-    StepParent::fillDynamicEnvironmentFromEnv();
+    $dynamicEnvironment = new DynamicEnvironment();
+    $dynamicEnvironment->fillDynamicEnvironmentFromEnv();
 
-    $this->assertEquals(StepParent::getVariable("fullrun"), "yes");
+    $this->assertEquals($dynamicEnvironment->getVariable("fullrun"), "yes");
 
   }
 
