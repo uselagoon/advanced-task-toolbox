@@ -2,7 +2,6 @@
 
 namespace Migrator\Step;
 
-use _PHPStan_7dd5f1b1b\Nette\Neon\Exception;
 use Migrator\LagoonUtilityBelt;
 use Migrator\LagoonUtilityBeltInterface;
 use Migrator\LoggerTrait;

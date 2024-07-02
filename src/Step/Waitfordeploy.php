@@ -14,7 +14,7 @@ class Waitfordeploy extends StepParent
           "passIfTextExistsInLogs",
           $args
         ) ? $args["passIfTextExistsInLogs"] : null;
-        $buildId = !empty($args['buildId']) ? self::getVariable($args['buildId']) : null;
+        $buildId = !empty($args['buildId']) ? $this->dynamicEnvironment->getVariable($args['buildId']) : null;
         if (empty($buildId)) {
             throw new \Exception(
               "Cannot run step waitfordeploy without setting a 'buildId'"
