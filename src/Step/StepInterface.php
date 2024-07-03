@@ -8,7 +8,7 @@ use Migrator\RunnerArgs;
 interface StepInterface
 {
 
-    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args);
+    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args, DynamicEnvironment $dynamicEnvironment);
 
     public function run(array $args);
 

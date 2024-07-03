@@ -2,7 +2,6 @@
 
 namespace Migrator\Step;
 
-use _PHPStan_7dd5f1b1b\Nette\Neon\Exception;
 use Migrator\LagoonUtilityBelt;
 use Migrator\LagoonUtilityBeltInterface;
 use Migrator\LoggerTrait;
@@ -12,21 +11,23 @@ use function WyriHaximus\Twig\render;
 
 abstract class StepParent implements StepInterface
 {
-    use LoggerTrait, DynamicEnvironmentTrait;
+    use LoggerTrait;
     protected $cluster;
     protected $namespace;
     protected $utilityBelt;
     protected $token;
     protected $args;
     protected $commandName;
+    protected $dynamicEnvironment;
 
-    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args)
+    public function __construct(LagoonUtilityBeltInterface $utilityBelt, RunnerArgs $args, DynamicEnvironment $environment)
     {
         $this->cluster = $args->cluster;
         $this->namespace = $args->namespace;
         $this->token = $args->token;
         $this->args = $args;
         $this->utilityBelt = $utilityBelt;
+        $this->dynamicEnvironment = $environment;
     }
 
     /**
@@ -66,7 +67,7 @@ abstract class StepParent implements StepInterface
       'namespace' => $this->args->namespace,
     ];
 
-      return self::renderText($string, $extraSubs);
+      return $this->dynamicEnvironment->renderText($string, $extraSubs);
   }
 
     // We use dynamic dispatch to allow us to do some logging and

@@ -32,7 +32,7 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        $runner = new \Migrator\Runner($args, new \Migrator\Step\DynamicEnvironment());
         $runner->run();
         $this->assertTrue($testRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -61,7 +61,7 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        $runner = new \Migrator\Runner($args, new \Migrator\Step\DynamicEnvironment());
         $runner->run();
         $this->assertTrue($conditionalStepRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -90,7 +90,7 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        $runner = new \Migrator\Runner($args, new \Migrator\Step\DynamicEnvironment());
         $runner->run();
         $this->assertFalse($conditionalStepRan);
         \Migrator\Step\Test::clearCallbacks();
@@ -106,8 +106,9 @@ class RunnerTest extends TestCase
     {
         //just testing the test case callback
         $conditionalStepShouldHaveRun = false;
-        \Migrator\Step\DynamicEnvironmentTrait::setVariable('RUN_THIS', "true");
-        \Migrator\Step\DynamicEnvironmentTrait::setVariable('DONT_RUN_THAT', "true");
+        $dynamicEnvironmnet = new \Migrator\Step\DynamicEnvironment();
+        $dynamicEnvironmnet->setVariable('RUN_THIS', "true");
+        $dynamicEnvironmnet->setVariable('DONT_RUN_THAT', "true");
         $conditionalStepShouldNotHaveRun = true;
         $cb = function ($args) use (&$conditionalStepShouldHaveRun, &$conditionalStepShouldNotHaveRun) {
             if(!empty($args['testid']) && $args['testid'] == 1)
@@ -126,7 +127,7 @@ class RunnerTest extends TestCase
         );
         $args = new \Migrator\RunnerArgs();
         $args->steps = $steps['steps'];
-        $runner = new \Migrator\Runner($args);
+        $runner = new \Migrator\Runner($args, $dynamicEnvironmnet);
         $runner->run();
         $this->assertTrue($conditionalStepShouldHaveRun);
         $this->assertTrue($conditionalStepShouldNotHaveRun);

@@ -25,7 +25,10 @@ class RoboFile extends \Robo\Tasks
     ) {
 
         // Bootstrap the environment
-        \Migrator\Step\StepParent::fillDynamicEnvironmentFromEnv();
+
+        $dynamicEnv = new \Migrator\Step\DynamicEnvironment();
+        $dynamicEnv->fillDynamicEnvironmentFromEnv();
+
 
         \Migrator\LagoonUtilityBelt::setUpLagoon_yml();
         $climate = new CLImate;
@@ -56,7 +59,7 @@ class RoboFile extends \Robo\Tasks
             if(!empty($migration['prerequisites'])) {
                 $climate->out("Found prerequisite steps - will run with no rollback\n\n");
                 $args->steps = $migration['prerequisites'];
-                $runner = new \Migrator\Runner($args);
+                $runner = new \Migrator\Runner($args, $dynamicEnv);
                 $runner->run();
             } else {
                 $climate->out("No prerequisites found - proceeding to run main steps\n\n");
@@ -68,7 +71,7 @@ class RoboFile extends \Robo\Tasks
 
         try {
             $args->steps = $migration['steps'];
-            $runner = new \Migrator\Runner($args);
+            $runner = new \Migrator\Runner($args, $dynamicEnv);
             $runner->run();
         } catch (\Exception $ex) {
 
@@ -80,7 +83,7 @@ class RoboFile extends \Robo\Tasks
             if(!empty($migration['rollback'])) {
                 $climate->out("Attempting to run rollback steps\n\n");
                 $args->steps = $migration['rollback'];
-                $runner = new \Migrator\Runner($args);
+                $runner = new \Migrator\Runner($args, $dynamicEnv);
                 $runner->run();
                 exit(1);
             }
