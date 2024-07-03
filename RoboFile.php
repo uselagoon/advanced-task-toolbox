@@ -25,7 +25,6 @@ class RoboFile extends \Robo\Tasks
     ) {
 
         // Bootstrap the environment
-//        \Migrator\Step\StepParent::fillDynamicEnvironmentFromEnv();
 
         $dynamicEnv = new \Migrator\Step\DynamicEnvironment();
         $dynamicEnv->fillDynamicEnvironmentFromEnv();
